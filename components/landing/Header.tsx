@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { Menu, X, Sun, Moon, ShoppingCart, ChevronRight, GraduationCap, Briefcase, FileText } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Header: React.FC = () => {
   const { setView, theme, toggleTheme, view, cart } = useStore();
@@ -42,11 +42,11 @@ export const Header: React.FC = () => {
       }}
     >
       <div className="relative">
-        <img src={LogoImg} alt="Motion Max" className="h-8 md:h-10 lg:h-12 w-auto transition-transform duration-500 group-hover:rotate-[360deg]" />
+        <img src={LogoImg} alt="Defined Domain" className="h-8 md:h-10 lg:h-12 w-auto transition-transform duration-500 group-hover:rotate-[360deg]" />
         <div className="absolute -inset-1 bg-googleBlue/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
       </div>
       <div className="flex flex-col justify-center">
-        <span className="font-black text-lg md:text-xl lg:text-2xl tracking-tighter text-slate-900 dark:text-white leading-none">MOTION MAX</span>
+        <span className="font-black text-lg md:text-xl lg:text-2xl tracking-tighter text-slate-900 dark:text-white leading-none">DEFINED DOMAIN</span>
         <span className="text-[7px] md:text-[8px] lg:text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400 block tracking-[0.3em] lg:tracking-[0.4em] mt-1">Day Services</span>
       </div>
     </div>
@@ -253,7 +253,7 @@ export const Header: React.FC = () => {
             >
               Access Portal
             </button>
-            <p className="text-center text-[9px] font-bold text-slate-400 tracking-[0.5em] uppercase">Motion Max Terminal v3.1.4</p>
+            <p className="text-center text-[9px] font-bold text-slate-400 tracking-[0.5em] uppercase">Defined Domain Terminal v3.1.4</p>
           </div>
         </div>
       )}

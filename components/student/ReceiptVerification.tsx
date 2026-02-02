@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../../store/useStore';
 import { ShieldCheck, CheckCircle2, AlertCircle, ArrowLeft, DollarSign, Calendar, User, Hash, Globe, BadgeCheck } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const ReceiptVerification: React.FC = () => {
   const { payments, setView } = useStore();
@@ -31,9 +31,9 @@ export const ReceiptVerification: React.FC = () => {
       <div className="w-full max-w-3xl space-y-10 animate-in fade-in duration-700">
         <header className="flex flex-col md:flex-row items-center justify-between gap-6 border-b-2 border-slate-100 dark:border-slate-800 pb-8">
            <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setView('landing')}>
-              <img src={LogoImg} alt="M" className="h-14 w-auto transition-transform group-hover:rotate-12" />
+              <img src={LogoImg} alt="D" className="h-14 w-auto transition-transform group-hover:rotate-12" />
               <div className="flex flex-col">
-                <span className="font-black text-2xl tracking-tighter leading-none uppercase">Motion Max</span>
+                <span className="font-black text-2xl tracking-tighter leading-none uppercase">Defined Domain</span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400 mt-1">Verification Node</span>
               </div>
            </div>
@@ -49,7 +49,7 @@ export const ReceiptVerification: React.FC = () => {
              <div>
                 <h2 className="text-3xl font-black uppercase text-rose-600 tracking-tight leading-none">Security Alert</h2>
                 <p className="text-slate-500 dark:text-slate-400 font-medium mt-4 max-w-sm mx-auto">
-                  This verification hash does not match any official Motion Max registry records. Please contact support.
+                  This verification hash does not match any official Defined Domain registry records. Please contact support.
                 </p>
              </div>
              <button onClick={() => setView('landing')} className="px-10 py-4 bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">Return to Home</button>
@@ -113,7 +113,7 @@ export const ReceiptVerification: React.FC = () => {
                       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Server Match</span>
                    </div>
-                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Motion Max Secure Terminal v3.1</p>
+                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Defined Domain Secure Terminal v3.1</p>
                 </div>
              </div>
 

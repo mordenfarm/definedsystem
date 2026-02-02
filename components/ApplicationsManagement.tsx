@@ -29,7 +29,7 @@ export const ApplicationsManagement: React.FC = () => {
   const downloadCV = (base64: string, name: string) => {
     const link = document.createElement('a');
     link.href = base64;
-    link.download = name || 'CV_MotionMax.pdf';
+    link.download = name || 'CV_Defined Domain.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

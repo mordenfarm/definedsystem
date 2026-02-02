@@ -4,7 +4,7 @@ import { useStore } from './store/useStore';
 import { Role } from './types';
 import { ChevronLeft, Mail, Lock, CheckCircle2, ShieldCheck, Activity, AlertCircle } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const LoginPage: React.FC = () => {
   const { setView, login } = useStore();
@@ -36,12 +36,12 @@ export const LoginPage: React.FC = () => {
 
   const BrandLogo = ({ light }: { light?: boolean }) => (
     <div className="flex flex-col items-center gap-2">
-      <img src={LogoImg} alt="Motion Max" className={`h-24 w-auto ${light ? 'brightness-0 invert' : ''} transition-transform duration-700 hover:rotate-3`} />
+      <img src={LogoImg} alt="Defined Domain" className={`h-24 w-auto ${light ? 'brightness-0 invert' : ''} transition-transform duration-700 hover:rotate-3`} />
       <span 
         className={`font-black text-3xl tracking-tighter uppercase ${light ? 'text-white' : 'text-slate-900'}`}
         style={{ fontFamily: '"Arial Black", "Franklin Gothic Heavy", sans-serif' }}
       >
-        MOTION MAX
+        DEFINED DOMAIN
       </span>
     </div>
   );
@@ -74,7 +74,7 @@ export const LoginPage: React.FC = () => {
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Secure Access</span>
             </div>
             <h1 className="text-4xl font-black tracking-tight uppercase leading-none">Welcome back</h1>
-            <p className="text-slate-500 mt-3 font-medium text-sm leading-relaxed">Identity verification required to access the Motion Max terminal and clinical databases.</p>
+            <p className="text-slate-500 mt-3 font-medium text-sm leading-relaxed">Identity verification required to access the Defined Domain terminal and clinical databases.</p>
           </header>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -118,7 +118,7 @@ export const LoginPage: React.FC = () => {
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@motionmax.co.zw" 
+                  placeholder="name@defineddomain.com"
                   required
                   disabled={loading}
                   className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-950 transition-all outline-none font-medium placeholder:text-slate-400/70"
@@ -215,7 +215,7 @@ export const LoginPage: React.FC = () => {
         
         {/* Terminal decoration */}
         <div className="absolute bottom-8 left-8 right-8 flex justify-between text-[9px] font-mono text-slate-600 uppercase tracking-widest">
-          <span>&copy; {new Date().getFullYear()} MOTION MAX TERMINAL</span>
+          <span>&copy; {new Date().getFullYear()} DEFINED DOMAIN TERMINAL</span>
           <span>BRANCH: STABLE-V3</span>
         </div>
       </div>

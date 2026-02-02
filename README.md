@@ -1,9 +1,9 @@
-# 🧩 Motion Max Management System
+# 🧩 Defined Domain Management System
 
 > A high-performance, clinical management platform for special needs schools. Designed with the precision of GitHub and the accessibility of Google.
 
 ## 🚀 Vision
-Motion Max bridges the gap between clinical excellence and administrative efficiency. Our system provides real-time ABA therapy tracking, developmental milestones, and automated financial oversight in a clean, unified interface.
+Defined Domain bridges the gap between clinical excellence and administrative efficiency. Our system provides real-time ABA therapy tracking, developmental milestones, and automated financial oversight in a clean, unified interface.
 
 ## 🎨 Design Philosophy
 - **Google Accessibility**: Clean white surfaces, intuitive navigation, and high-quality typography (Inter).
@@ -61,4 +61,4 @@ If your build fails with an `EINTEGRITY` error (checksum mismatch), it is likely
 4. If the error persists on Netlify, go to the **Deploys** tab and select **"Clear cache and deploy site"**.
 
 ---
-© 2025 Motion Max Day Services. Built for clinical excellence in Harare.
+© 2025 Defined Domain Day Services. Built for clinical excellence in Harare.

@@ -6,7 +6,7 @@ import {
   Briefcase, X, Settings, History, Send, Receipt, BellRing, ShieldAlert, Brain, ClipboardList, Coffee
 } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Sidebar: React.FC = () => {
   const { user, activeTab, setActiveTab, isMobileMenuOpen, toggleMobileMenu, theme, notify } = useStore();
@@ -81,7 +81,7 @@ export const Sidebar: React.FC = () => {
             <img src={LogoImg} alt="Logo" className="w-full h-auto" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">Motion Max</span>
+            <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">Defined Domain</span>
             <span className="text-[7px] font-bold text-blue-200 dark:text-blue-400 uppercase tracking-[0.3em] mt-1">Day Services</span>
           </div>
         </div>

@@ -182,7 +182,7 @@ export const SchoolTour: React.FC = () => {
             </div>
             <div className="p-10 bg-blue-50 dark:bg-blue-900/10 border-4 border-dashed border-blue-200 dark:border-blue-800 space-y-6">
                <div className="flex items-center gap-4"><Star size={28} className="text-blue-600 fill-blue-600"/><span className="text-sm font-black uppercase tracking-[0.2em] text-blue-600">Quality Certificate</span></div>
-               <p className="text-sm font-bold text-slate-600 dark:text-slate-400 italic leading-relaxed">"Motion Max is fully certified to provide educational support. We focus on every detail to ensure safety and progress."</p>
+               <p className="text-sm font-bold text-slate-600 dark:text-slate-400 italic leading-relaxed">"Defined Domain is fully certified to provide educational support. We focus on every detail to ensure safety and progress."</p>
             </div>
           </div>
         </div>

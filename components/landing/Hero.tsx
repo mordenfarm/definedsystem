@@ -59,7 +59,7 @@ export const Hero: React.FC = () => {
               opacity: fadeOutOpacity 
             }}
           >
-            MotionMax provides expert behavioral support for individuals with autism across Zimbabwe.
+            Defined Domain provides expert behavioral support for individuals with autism across Zimbabwe.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 pt-6">

@@ -291,10 +291,10 @@ export const useStore = create<AppState>((set, get) => {
         const q = query(studentsRef);
         const snapshot = await getDocs(q);
         const count = snapshot.size + 1;
-        const formattedId = `MM${count.toString().padStart(3, '0')}`;
+        const formattedId = `DD${count.toString().padStart(3, '0')}`;
         
         // UNIQUE STUDENT EMAIL
-        const studentEmail = `${formattedId.toLowerCase()}@motionmax.com`;
+        const studentEmail = `${formattedId.toLowerCase()}@defineddomain.com`;
         
         // PARSE IMAGE
         const finalImageUrl = extractSrcFromHtml(studentData.imageUrl || '');

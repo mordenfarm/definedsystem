@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { Sun, Moon, ArrowRight, HeartPulse, Brain, Users, MapPin, Phone, Mail, Instagram, Menu, X } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 const HeroBg = "https://i.ibb.co/SDBtypBM/hero.jpg";
 
 export const LandingPage: React.FC = () => {
@@ -40,13 +40,13 @@ export const LandingPage: React.FC = () => {
 
   const BrandLogo = () => (
     <div className="flex items-center gap-2 md:gap-3 group">
-      <img src={LogoImg} alt="Motion Max" className="h-10 md:h-12 w-auto transition-transform group-hover:scale-110" />
+      <img src={LogoImg} alt="Defined Domain" className="h-10 md:h-12 w-auto transition-transform group-hover:scale-110" />
       <div className="flex flex-col justify-center">
         <span 
           className="font-black text-xl md:text-2xl tracking-tighter text-slate-900 dark:text-white leading-none"
           style={{ fontFamily: '"Arial Black", "Franklin Gothic Heavy", sans-serif' }}
         >
-          MOTION MAX
+          DEFINED DOMAIN
         </span>
         <div className="w-full flex justify-between mt-1 md:mt-1.5">
           <span 
@@ -128,7 +128,7 @@ export const LandingPage: React.FC = () => {
                  >
                     Access Portal
                  </button>
-                 <p className="text-center text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">Motion Max Terminal v3.1</p>
+                 <p className="text-center text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">Defined Domain Terminal v3.1</p>
               </div>
            </div>
         </div>
@@ -158,7 +158,7 @@ export const LandingPage: React.FC = () => {
               Autism Center for Child Development
             </h1>
             <p className={`text-sm sm:text-xl md:text-2xl lg:text-3xl text-white/90 drop-shadow-lg max-w-4xl leading-relaxed font-semibold px-4 ${isHeroVisible ? 'animate-fade-in delay-100' : 'animate-fade-out'}`}>
-              MotionMax provides expert behavioral support for individuals with autism and special needs across Zimbabwe.
+              Defined Domain provides expert behavioral support for individuals with autism and special needs across Zimbabwe.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 pt-6 md:pt-10 w-full max-w-md sm:max-w-none">
               <button 
@@ -203,7 +203,7 @@ export const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer className="py-20 border-t border-slate-100 dark:border-slate-900 bg-white dark:bg-slate-950 text-center">
          <BrandLogo />
-         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mt-12">© {new Date().getFullYear()} MOTION MAX // BRANCH STABLE // DATA ENCRYPTED</p>
+         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mt-12">© {new Date().getFullYear()} DEFINED DOMAIN // BRANCH STABLE // DATA ENCRYPTED</p>
       </footer>
     </div>
   );

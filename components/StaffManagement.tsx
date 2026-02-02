@@ -440,7 +440,7 @@ export const StaffManagement: React.FC = () => {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 dark:text-slate-400 ml-2">Email Address</label>
-                      <input required type="email" name="email" className="w-full px-6 py-4 rounded-none bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 focus:border-blue-600 outline-none transition-all font-bold dark:text-white shadow-inner" placeholder="name@motionmax.co.zw" />
+                      <input required type="email" name="email" className="w-full px-6 py-4 rounded-none bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 focus:border-blue-600 outline-none transition-all font-bold dark:text-white shadow-inner" placeholder="name@defineddomain.com" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 dark:text-slate-400 ml-2">Phone Number</label>
