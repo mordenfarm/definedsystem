@@ -5,7 +5,7 @@ import { Role, Student, Parent, Staff } from '../types';
 import { Mail, Lock, ShieldCheck, Activity, Users, Loader2, ArrowLeft, GraduationCap, ChevronRight, Search, Zap } from 'lucide-react';
 import * as THREE from 'three';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 const LeftBg = "https://i.ibb.co/JR5Bhxpy/profileher.jpg";
 
 export const LoginPage: React.FC = () => {
@@ -184,7 +184,7 @@ export const LoginPage: React.FC = () => {
       let loginPass = bypassPass || password;
 
       if (selectedRole === 'STUDENT' && selectedStudentProfile) {
-        loginEmail = `${selectedStudentProfile.firstName.toLowerCase()}.${selectedStudentProfile.lastName.toLowerCase()}@motionmax.com`;
+        loginEmail = `${selectedStudentProfile.firstName.toLowerCase()}.${selectedStudentProfile.lastName.toLowerCase()}@defineddomain.com`;
       } else if (selectedRole === 'PARENT' && selectedParentProfile) {
         loginEmail = selectedParentProfile.email;
       } else if (selectedRole === 'SPECIALIST' && selectedStaffProfile) {
@@ -258,10 +258,10 @@ export const LoginPage: React.FC = () => {
           <div className="space-y-12">
             <div className="flex items-center gap-6">
               <div className="bg-white p-4 rounded-3xl shadow-lg flex items-center justify-center">
-                <img src={LogoImg} alt="Motion Max" className="h-16 w-auto object-contain" />
+                <img src={LogoImg} alt="Defined Domain" className="h-16 w-auto object-contain" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-4xl tracking-tight leading-none text-white uppercase">MOTION MAX</span>
+                <span className="font-bold text-4xl tracking-tight leading-none text-white uppercase">DEFINED DOMAIN</span>
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-200 mt-1">Day Services</span>
               </div>
             </div>
@@ -437,7 +437,7 @@ export const LoginPage: React.FC = () => {
                             type="email" 
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="name@motionmax.co.zw" 
+                            placeholder="name@defineddomain.com"
                             required
                             className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold dark:text-white text-sm"
                           />
@@ -478,7 +478,7 @@ export const LoginPage: React.FC = () => {
                   </div>
                 </form>
                 <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
-                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Motion Max // Zimbabwe-HRE v3.1</p>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Defined Domain // Zimbabwe-HRE v3.1</p>
                 </div>
               </div>
             </div>

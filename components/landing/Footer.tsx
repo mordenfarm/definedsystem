@@ -3,7 +3,7 @@ import React from 'react';
 import { Phone, Mail, Instagram, Linkedin, Twitter, MapPin, Heart, ArrowRight, Globe, Command } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Footer: React.FC = () => {
   const { setView } = useStore();
@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="text-blue-600 font-black text-5xl md:text-6xl uppercase tracking-tighter leading-none">
-                Motion Max
+                Defined Domain
               </h2>
               <p className="text-slate-900 dark:text-white font-bold text-xl md:text-2xl uppercase tracking-tight">
                 Behavioral Specialist
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                  <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-blue-600 border border-slate-100 dark:border-slate-800">
                     <Mail size={14} />
                  </div>
-                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">admin@motionmax.co.zw</span>
+                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">admin@defineddomain.com</span>
               </div>
               <div className="flex lg:flex-row-reverse items-center gap-4 group cursor-default">
                  <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-blue-600 border border-slate-100 dark:border-slate-800">
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
          
          <div className="relative z-10 max-w-[1600px] mx-auto h-full px-12 flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">© {new Date().getFullYear()} Motion Max Registry</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">© {new Date().getFullYear()} Defined Domain Registry</span>
             </div>
             
             <div className="flex items-center gap-4">

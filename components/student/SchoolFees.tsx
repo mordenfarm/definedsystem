@@ -27,7 +27,7 @@ import autoTable from 'jspdf-autotable';
 import { PaymentRecord } from '../../types';
 
 const GatewayBg = "https://i.ibb.co/JR5Bhxpy/profileher.jpg";
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 const PAYMENT_METHODS = [
   { id: 'ecocash', name: 'Ecocash', logo: 'https://i.ibb.co/7NQSc15p/ecocash.png' },

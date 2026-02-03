@@ -109,7 +109,7 @@ export const UniformShop: React.FC = () => {
             <h1 className="text-2xl font-black uppercase text-slate-900 dark:text-white leading-none tracking-tighter">
               {showCartView ? 'Your Shopping Cart' : 'School Uniform Shop'}
             </h1>
-            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[0.3em] italic">Official Motion Max uniforms and gear</p>
+            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[0.3em] italic">Official Defined Domain uniforms and gear</p>
           </div>
         </div>
         

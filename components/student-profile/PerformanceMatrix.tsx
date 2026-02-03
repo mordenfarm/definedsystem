@@ -14,7 +14,7 @@ interface Props {
   onOpenDay: (date: string) => void;
 }
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, filter, setFilter, onOpenDay }) => {
   const [isExporting, setIsExporting] = React.useState<string | null>(null);
@@ -81,13 +81,13 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
     } catch (e) {
       doc.setFontSize(22);
       doc.setTextColor(21, 74, 112);
-      doc.text("MOTION MAX", 15, 25);
+      doc.text("DEFINED DOMAIN", 15, 25);
     }
 
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text("27 Colnebrook Lane, Harare", 195, 15, { align: 'right' });
-    doc.text("admin@motionmax.co.zw", 195, 20, { align: 'right' });
+    doc.text("admin@defineddomain.com", 195, 20, { align: 'right' });
     doc.text("+263 775 926 454", 195, 25, { align: 'right' });
 
     // Report Identity
@@ -146,7 +146,7 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(150);
-      doc.text(`Official Motion Max Day Services Record // Generated: ${new Date().toLocaleString()}`, 105, 285, { align: 'center' });
+      doc.text(`Official Defined Domain Day Services Record // Generated: ${new Date().toLocaleString()}`, 105, 285, { align: 'center' });
       doc.text(`Page ${i} of ${pageCount}`, 195, 285, { align: 'right' });
     }
 

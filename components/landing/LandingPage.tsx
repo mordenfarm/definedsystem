@@ -130,7 +130,7 @@ export const LandingPage: React.FC = () => {
               <div className="max-w-4xl mx-auto text-center space-y-12 mb-32">
                 <h3 className="text-5xl md:text-9xl font-black tracking-tighter uppercase dark:text-white leading-[0.8]">The Story</h3>
                 <p className="text-2xl md:text-5xl text-slate-800 dark:text-slate-400 leading-tight font-black italic tracking-tight">
-                  "Founded in 2019 by Kevin Muzangaza, Motion Max evolved from a small service to Zimbabwe's leading therapeutic node."
+                  "Founded in 2019 by Kevin Muzangaza, Defined Domain evolved from a small service to Zimbabwe's leading therapeutic node."
                 </p>
                 <div className="flex justify-center gap-1.5">
                    <div className="w-8 h-1 bg-blue-600"></div>
@@ -157,7 +157,7 @@ export const LandingPage: React.FC = () => {
                        </h4>
                        <div className="mt-8 flex items-center justify-center gap-4">
                           <div className="h-px w-12 bg-blue-500"></div>
-                          <span className="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-[0.5em]">Motion Max Crew</span>
+                          <span className="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-[0.5em]">Defined Domain Crew</span>
                           <div className="h-px w-12 bg-blue-500"></div>
                        </div>
                     </div>

@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import { NAV_ITEMS } from '../constants';
 import { Menu, X, LogOut, Bell, Search, Command, Settings, ChevronRight } from 'lucide-react';
 
-const LogoImg = "https://i.ibb.co/1ftNnHrx/motionmaxlgo6.png";
+const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, activeTab, setActiveTab, logout } = useStore();
@@ -22,9 +22,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-            <img src={LogoImg} alt="M" className="h-8 w-auto" />
+            <img src={LogoImg} alt="D" className="h-8 w-auto" />
             <div className="hidden sm:flex flex-col">
-              <span className="font-bold text-lg leading-none tracking-tight">Motion Max</span>
+              <span className="font-bold text-lg leading-none tracking-tight">Defined Domain</span>
               <span className="text-[9px] font-bold uppercase text-slate-400 tracking-widest mt-1">Management</span>
             </div>
           </div>

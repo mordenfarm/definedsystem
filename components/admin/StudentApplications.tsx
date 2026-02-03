@@ -22,7 +22,7 @@ export const StudentApplications: React.FC = () => {
     if (!selectedApp) return;
     
     if (status === 'Approved' && channel) {
-      const message = `Hello ${selectedApp.firstName}'s guardian,\n\nWe are happy to tell you that the application for ${selectedApp.firstName} ${selectedApp.lastName} at Motion Max has been approved!\n\n${replyText ? `Note: ${replyText}\n\n` : ''}Please come to our office at 27 Colnebrook Lane, Harare to finish the process.\n\nBest regards,\nMotion Max Admissions Team`;
+      const message = `Hello ${selectedApp.firstName}'s guardian,\n\nWe are happy to tell you that the application for ${selectedApp.firstName} ${selectedApp.lastName} at Defined Domain has been approved!\n\n${replyText ? `Note: ${replyText}\n\n` : ''}Please come to our office at 27 Colnebrook Lane, Harare to finish the process.\n\nBest regards,\nDefined Domain Admissions Team`;
       const subject = `Application Approved: ${selectedApp.firstName} ${selectedApp.lastName}`;
 
       if (channel === 'WhatsApp') {
