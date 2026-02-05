@@ -16,6 +16,7 @@ export const LoginPage: React.FC = () => {
 
   const roles: { id: Role; label: string; desc: string }[] = [
     { id: 'SUPER_ADMIN', label: 'Administrator', desc: 'System control & financials' },
+    { id: 'ADMIN_SUPPORT', label: 'Office & Support', desc: 'Registry & admin assistance' },
     { id: 'SPECIALIST', label: 'Teacher / Therapist', desc: 'Data entry & session logging' },
     { id: 'PARENT', label: 'Student / Parent', desc: 'View reports & progress' },
   ];

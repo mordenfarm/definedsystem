@@ -295,41 +295,52 @@ export const useStore = create<AppState>((set, get) => {
         const count = snapshot.size + 1;
         const formattedId = `DD${count.toString().padStart(3, '0')}`;
         
-        // UNIQUE STUDENT EMAIL
         const studentEmail = `${formattedId.toLowerCase()}@defineddomain.com`;
-        
-        // PARSE IMAGE
         const finalImageUrl = extractSrcFromHtml(studentData.imageUrl || '');
-        
-        // 1. Student Auth
-        const studentUserCredential = await createUserWithEmailAndPassword(secondaryAuth, studentEmail, "000000");
-        const studentUid = studentUserCredential.user.uid;
-        
-        const finalStudent = { ...studentData, imageUrl: finalImageUrl, fullName, id: formattedId, firebaseUid: studentUid, totalPaid: 0 };
-        await setDoc(doc(db, 'students', studentUid), finalStudent);
-        await setDoc(doc(db, 'users', studentUid), { id: studentUid, name: fullName, email: studentEmail, role: 'STUDENT', avatar: finalImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${fullName}` });
-        
-        // 2. Parent Account (Handle Siblings)
-        const parentEmail = studentData.parentEmail.toLowerCase().trim();
-        const usersRef = collection(db, 'users');
-        const parentQuery = query(usersRef, where('email', '==', parentEmail));
-        const parentSnapshot = await getDocs(parentQuery);
+        let studentUid = '';
 
-        if (parentSnapshot.empty) {
+        // 1. Student Account
+        try {
+          const studentUserCredential = await createUserWithEmailAndPassword(secondaryAuth, studentEmail, "000000");
+          studentUid = studentUserCredential.user.uid;
+        } catch (err: any) {
+          if (err.code === 'auth/email-already-in-use') {
+            const cred = await signInWithEmailAndPassword(secondaryAuth, studentEmail, "000000");
+            studentUid = cred.user.uid;
+          } else { throw err; }
+        }
+
+        if (studentUid) {
+          const finalStudent = { ...studentData, imageUrl: finalImageUrl, fullName, id: formattedId, firebaseUid: studentUid, totalPaid: 0 };
+          await setDoc(doc(db, 'students', studentUid), finalStudent);
+          await setDoc(doc(db, 'users', studentUid), { id: studentUid, name: fullName, email: studentEmail, role: 'STUDENT', avatar: finalImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${fullName}` });
+        }
+        
+        // 2. Parent Account
+        const parentEmail = studentData.parentEmail.toLowerCase().trim();
+        let parentUid = '';
+
+        try {
           const parentUserCredential = await createUserWithEmailAndPassword(secondaryAuth, parentEmail, "000000");
-          const parentUid = parentUserCredential.user.uid;
+          parentUid = parentUserCredential.user.uid;
+        } catch (err: any) {
+          if (err.code === 'auth/email-already-in-use') {
+            const cred = await signInWithEmailAndPassword(secondaryAuth, parentEmail, "000000");
+            parentUid = cred.user.uid;
+          } else { throw err; }
+        }
+
+        if (parentUid) {
           const parentRecord: Parent = { id: parentUid, name: studentData.parentName, email: parentEmail, phone: studentData.parentPhone, address: studentData.homeAddress, studentId: formattedId, studentFullName: fullName, firebaseUid: parentUid };
           await setDoc(doc(db, 'parents', parentUid), parentRecord);
           await setDoc(doc(db, 'users', parentUid), { id: parentUid, name: studentData.parentName, email: parentEmail, role: 'PARENT', avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${studentData.parentName}` });
-        } else {
-          get().notify('info', `Linked new child to existing parent account.`);
         }
         
         await signOut(secondaryAuth);
-        get().notify('success', `Student registered.`);
+        get().notify('success', `Student and Guardian registered.`);
       } catch (err: any) { 
         await signOut(secondaryAuth);
-        get().notify('error', err.code === 'auth/email-already-in-use' ? 'This email is already in use.' : err.message); 
+        get().notify('error', err.message);
       }
     },
     updateStudent: async (uid, data) => {
@@ -351,22 +362,25 @@ export const useStore = create<AppState>((set, get) => {
       try {
         const fullName = `${staffData.firstName} ${staffData.lastName}`;
         const email = staffData.email.toLowerCase().trim();
-        
-        const usersRef = collection(db, 'users');
-        const emailQuery = query(usersRef, where('email', '==', email));
-        const emailSnapshot = await getDocs(emailQuery);
-        
-        if (!emailSnapshot.empty) {
-          throw new Error('This email is already registered to someone else.');
+        const finalImageUrl = extractSrcFromHtml(staffData.imageUrl || '');
+        let staffUid = '';
+
+        try {
+          const staffCredential = await createUserWithEmailAndPassword(secondaryAuth, email, "000000");
+          staffUid = staffCredential.user.uid;
+        } catch (err: any) {
+          if (err.code === 'auth/email-already-in-use') {
+            const cred = await signInWithEmailAndPassword(secondaryAuth, email, "000000");
+            staffUid = cred.user.uid;
+          } else { throw err; }
         }
 
-        const finalImageUrl = extractSrcFromHtml(staffData.imageUrl || '');
-        const staffCredential = await createUserWithEmailAndPassword(secondaryAuth, email, "000000");
-        const staffUid = staffCredential.user.uid;
-        await setDoc(doc(db, 'staff', staffUid), { ...staffData, imageUrl: finalImageUrl, fullName, id: staffUid, firebaseUid: staffUid });
-        await setDoc(doc(db, 'users', staffUid), { id: staffUid, name: fullName, email: email, role: staffData.role, avatar: finalImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${fullName}` });
-        await signOut(secondaryAuth);
-        get().notify('success', `Staff member added.`);
+        if (staffUid) {
+          await setDoc(doc(db, 'staff', staffUid), { ...staffData, imageUrl: finalImageUrl, fullName, id: staffUid, firebaseUid: staffUid });
+          await setDoc(doc(db, 'users', staffUid), { id: staffUid, name: fullName, email: email, role: staffData.role, avatar: finalImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${fullName}` });
+          await signOut(secondaryAuth);
+          get().notify('success', `Staff member registered successfully.`);
+        }
       } catch (err: any) { 
         await signOut(secondaryAuth);
         get().notify('error', err.message); 
