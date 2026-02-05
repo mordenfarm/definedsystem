@@ -13,11 +13,11 @@ const TeamCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const team = [
-    { name: "Ingvary Sibanda", role: "Inclusive Education Coodinator", image: "https://i.ibb.co/M5pcJ62x/IMG-20260204-WA0055.jpg" },
+    { name: "Ingvary Sibanda", role: "Inclusive Education Coordinator", image: "https://i.ibb.co/M5pcJ62x/IMG-20260204-WA0055.jpg" },
     { name: "Abgirl", role: "Sign Language facilitator", image: "https://i.ibb.co/zHWJVV5H/IMG-20260204-WA0051.jpg" },
     { name: "Doctor Dhliwayo", role: "Counselor and Consultant", image: "https://i.ibb.co/fYYqx68K/IMG-20260204-WA0050.jpg" },
-    { name: "Trish Mangare", role: "Speacial Needs Facilitator", image: "https://i.ibb.co/6cVYrRFz/IMG-20260205-WA0025.jpg" },
-    { name: "Sylvia Chisasa", role: "Speacial NEeds Facilitator", image: "https://i.ibb.co/MkgLPprC/IMG-20260204-WA0052.jpg" },
+    { name: "Trish Mangare", role: "Special Needs Facilitator", image: "https://i.ibb.co/6cVYrRFz/IMG-20260205-WA0025.jpg" },
+    { name: "Sylvia Chisasa", role: "Special Needs Facilitator", image: "https://i.ibb.co/MkgLPprC/IMG-20260204-WA0052.jpg" },
     { name: "Simangaliso Matshakaire", role: "Office Administrator", image: "https://i.ibb.co/hxDJ6pP2/IMG-20260204-WA0067.jpg" },
     { name: "Nyasha Lorain", role: "Inclusive Education Advocate", image: "https://i.ibb.co/67yg8Cbc/IMG-20260204-WA0054.jpg" },
     { name: "Lamelia", role: "Support Worker", image: "https://i.ibb.co/fGKfyh1s/IMG-20260204-WA0049.jpg" },

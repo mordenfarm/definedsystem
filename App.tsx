@@ -26,7 +26,6 @@ import { NoticesSlideOver } from './components/common/NoticesSlideOver';
 import { AdminNotices } from './components/AdminNotices';
 import { SystemLogs } from './components/SystemLogs';
 import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
-import { autoSeed } from './utils/seeder';
 
 const NotificationHost = () => {
   const { notifications, removeNotification } = useStore();
@@ -64,7 +63,6 @@ const App: React.FC = () => {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     initializeData();
-    autoSeed(); 
     
     const params = new URLSearchParams(window.location.search);
     if (params.has('v')) {

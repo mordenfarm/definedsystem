@@ -1,7 +1,7 @@
 
 import { useStore, MilestoneTemplate } from '../store/useStore';
-import { createUserWithEmailAndPassword, signOut, Auth } from 'firebase/auth';
-import { doc, setDoc, getFirestore } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, Auth } from 'firebase/auth';
+import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
 
 const ECDC_FULL_DATA: MilestoneTemplate[] = [
   {
@@ -233,22 +233,51 @@ export const autoSeed = async (secondaryAuth?: Auth) => {
   if (secondaryAuth) {
     const adminEmail = 'admin@gmail.com';
     const adminPass = 'pppppp';
+    let uid = '';
+
     try {
       const cred = await createUserWithEmailAndPassword(secondaryAuth, adminEmail, adminPass);
-      const uid = cred.user.uid;
-      await setDoc(doc(db, 'users', uid), {
-        id: uid,
-        name: 'System Administrator',
-        email: adminEmail,
-        role: 'SUPER_ADMIN',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
-      });
-      console.log("Admin seeded successfully.");
-      await signOut(secondaryAuth);
+      uid = cred.user.uid;
+      console.log("Admin account created in Auth.");
     } catch (err: any) {
-      if (err.code !== 'auth/email-already-in-use') {
-        console.error("Admin seeding error:", err);
+      if (err.code === 'auth/email-already-in-use') {
+        try {
+          const cred = await signInWithEmailAndPassword(secondaryAuth, adminEmail, adminPass);
+          uid = cred.user.uid;
+          console.log("Admin already exists in Auth, retrieved UID.");
+        } catch (signInErr) {
+          console.error("Failed to sign in to existing admin account:", signInErr);
+        }
+      } else {
+        console.error("Admin Auth creation error:", err);
       }
+    }
+
+    if (uid) {
+      try {
+        const userDocRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userDocRef);
+        if (!userDoc.exists()) {
+          await setDoc(userDocRef, {
+            id: uid,
+            name: 'System Administrator',
+            email: adminEmail,
+            role: 'SUPER_ADMIN',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
+          });
+          console.log("Admin profile created in Firestore.");
+        } else {
+          // If it exists but maybe has wrong role? User didn't specify, but let's ensure it's correct.
+          const data = userDoc.data();
+          if (data.role !== 'SUPER_ADMIN') {
+            await setDoc(userDocRef, { role: 'SUPER_ADMIN' }, { merge: true });
+            console.log("Updated existing admin user to SUPER_ADMIN role.");
+          }
+        }
+      } catch (firestoreErr) {
+        console.error("Admin Firestore seeding error:", firestoreErr);
+      }
+      await signOut(secondaryAuth);
     }
   }
 
