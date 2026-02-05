@@ -13,10 +13,15 @@ const TeamCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const team = [
-    { name: "Kundai", role: "Occupational Therapist", image: "https://i.ibb.co/pvMC8GxQ/Kundai.jpg" },
-    { name: "Samantha", role: "Speech Therapist", image: "https://i.ibb.co/pr3wz7h9/Samantha.jpg" },
-    { name: "Kevin", role: "Behavioural Therapist", image: "https://i.ibb.co/932HxLLj/Kevin.jpg" },
-    { name: "Livy", role: "Animal Therapist", image: "https://i.ibb.co/SDRLwc6G/Livy.jpg" },
+    { name: "Ingvary Sibanda", role: "Inclusive Education Coodinator", image: "https://i.ibb.co/M5pcJ62x/IMG-20260204-WA0055.jpg" },
+    { name: "Abgirl", role: "Sign Language facilitator", image: "https://i.ibb.co/zHWJVV5H/IMG-20260204-WA0051.jpg" },
+    { name: "Doctor Dhliwayo", role: "Counselor and Consultant", image: "https://i.ibb.co/fYYqx68K/IMG-20260204-WA0050.jpg" },
+    { name: "Trish Mangare", role: "Speacial Needs Facilitator", image: "https://i.ibb.co/6cVYrRFz/IMG-20260205-WA0025.jpg" },
+    { name: "Sylvia Chisasa", role: "Speacial NEeds Facilitator", image: "https://i.ibb.co/MkgLPprC/IMG-20260204-WA0052.jpg" },
+    { name: "Simangaliso Matshakaire", role: "Office Administrator", image: "https://i.ibb.co/hxDJ6pP2/IMG-20260204-WA0067.jpg" },
+    { name: "Nyasha Lorain", role: "Inclusive Education Advocate", image: "https://i.ibb.co/67yg8Cbc/IMG-20260204-WA0054.jpg" },
+    { name: "Lamelia", role: "Support Worker", image: "https://i.ibb.co/fGKfyh1s/IMG-20260204-WA0049.jpg" },
+    { name: "Leon", role: "Support Worker", image: "https://i.ibb.co/yn2GkzR3/IMG-20260204-WA0048.jpg" },
   ];
 
   // Automatic scrolling logic
@@ -130,7 +135,7 @@ export const LandingPage: React.FC = () => {
               <div className="max-w-4xl mx-auto text-center space-y-12 mb-32">
                 <h3 className="text-5xl md:text-9xl font-black tracking-tighter uppercase dark:text-white leading-[0.8]">The Story</h3>
                 <p className="text-2xl md:text-5xl text-slate-800 dark:text-slate-400 leading-tight font-black italic tracking-tight">
-                  "Founded in 2019 by Kevin Muzangaza, Defined Domain evolved from a small service to Zimbabwe's leading therapeutic node."
+                  "Founded to meet the urgent need for inclusive developmental care in Masvingo, Defined Domains has grown into a trusted centre providing specialized support for children with autism, trisomy 21, and intellectual disabilities."
                 </p>
                 <div className="flex justify-center gap-1.5">
                    <div className="w-8 h-1 bg-blue-600"></div>
@@ -139,21 +144,36 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Group Photo Section - Sharp Rectangular with Text at Bottom Edge */}
+              {/* Team Board Section */}
               <div className="max-w-7xl mx-auto px-0 md:px-6">
-                 <div className="relative rounded-none overflow-hidden shadow-[0_100px_150px_-40px_rgba(0,0,0,0.7)] border-y md:border border-slate-200 dark:border-slate-800 group h-[450px] md:h-[750px]">
-                    <img 
-                        src="https://i.ibb.co/BHrbSN6Y/groupphoto.jpg" 
-                        alt="Team" 
-                        className="w-full h-full object-cover transition-transform duration-[30s] group-hover:scale-105" 
-                    />
+                 <div className="relative rounded-none overflow-hidden shadow-[0_100px_150px_-40px_rgba(0,0,0,0.7)] border-y md:border border-slate-200 dark:border-slate-800 group min-h-[450px] md:min-h-[750px] bg-slate-100 dark:bg-slate-900 flex flex-col">
                     
-                    {/* Dark fade only at the bottom to protect faces */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                    {/* Image Board / Grid */}
+                    <div className="flex-1 grid grid-cols-3 md:grid-cols-5 gap-2 p-2">
+                      {[
+                        "https://i.ibb.co/M5pcJ62x/IMG-20260204-WA0055.jpg",
+                        "https://i.ibb.co/zHWJVV5H/IMG-20260204-WA0051.jpg",
+                        "https://i.ibb.co/fYYqx68K/IMG-20260204-WA0050.jpg",
+                        "https://i.ibb.co/6cVYrRFz/IMG-20260205-WA0025.jpg",
+                        "https://i.ibb.co/MkgLPprC/IMG-20260204-WA0052.jpg",
+                        "https://i.ibb.co/hxDJ6pP2/IMG-20260204-WA0067.jpg",
+                        "https://i.ibb.co/67yg8Cbc/IMG-20260204-WA0054.jpg",
+                        "https://i.ibb.co/fGKfyh1s/IMG-20260204-WA0049.jpg",
+                        "https://i.ibb.co/yn2GkzR3/IMG-20260204-WA0048.jpg",
+                        "https://i.ibb.co/spSVqW8s/definedlogo.png"
+                      ].map((img, i) => (
+                        <div key={i} className="relative overflow-hidden aspect-square grayscale hover:grayscale-0 transition-all duration-500">
+                          <img src={img} alt="Team board" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Dark fade only at the bottom */}
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none"></div>
                     
                     <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 text-center z-10">
                        <h4 className="text-xl md:text-5xl font-black uppercase tracking-tighter text-white max-w-5xl mx-auto leading-[0.9] drop-shadow-2xl translate-y-4 group-hover:translate-y-0 transition-transform duration-1000">
-                          Driven by data, heart, and clinical expertise—meet the team redefining behavioral therapy in Zimbabwe.
+                          Where compassion meets expertise—meet the team shaping the future of behavioral therapy in Zimbabwe.
                        </h4>
                        <div className="mt-8 flex items-center justify-center gap-4">
                           <div className="h-px w-12 bg-blue-500"></div>

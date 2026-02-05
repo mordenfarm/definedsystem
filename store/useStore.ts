@@ -30,12 +30,12 @@ import {
 } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBQZSWdzzx1IJWGGbxPZH7GxudX5zNYHbw",
-  authDomain: "nhaurwa-70692.firebaseapp.com",
-  projectId: "nhaurwa-70692",
-  storageBucket: "nhaurwa-70692.firebasestorage.app",
-  messagingSenderId: "448641589213",
-  appId: "1:448641589213:web:bd18d8220f571f8fe7a034"
+  apiKey: "AIzaSyAJleJuSyL7GvqpcvTsZNnVYRCMmqJNR8o",
+  authDomain: "defineddomnain.firebaseapp.com",
+  projectId: "defineddomnain",
+  storageBucket: "defineddomnain.firebasestorage.app",
+  messagingSenderId: "546744382707",
+  appId: "1:546744382707:web:9d6f21fc8bf3f7b2a27386"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -224,6 +224,8 @@ export const useStore = create<AppState>((set, get) => {
     activeTab: 'dashboard',
     setActiveTab: (activeTab) => set({ activeTab, isMobileMenuOpen: false }),
     initializeData: () => {
+      import('../utils/seeder').then(m => m.autoSeed(secondaryAuth));
+
       onSnapshot(query(collection(db, 'students'), orderBy('fullName')), (snapshot) => {
         set({ students: snapshot.docs.map(doc => ({ ...doc.data() } as Student)) });
       });

@@ -1,5 +1,7 @@
 
 import { useStore, MilestoneTemplate } from '../store/useStore';
+import { createUserWithEmailAndPassword, signOut, Auth } from 'firebase/auth';
+import { doc, setDoc, getFirestore } from 'firebase/firestore';
 
 const ECDC_FULL_DATA: MilestoneTemplate[] = [
   {
@@ -220,12 +222,36 @@ const ECDC_FULL_DATA: MilestoneTemplate[] = [
 
 let seederActive = false;
 
-export const autoSeed = async () => {
+export const autoSeed = async (secondaryAuth?: Auth) => {
   if (seederActive) return;
   seederActive = true;
   
   const state = useStore.getState();
+  const db = getFirestore();
   
+  // Seed Admin
+  if (secondaryAuth) {
+    const adminEmail = 'admin@gmail.com';
+    const adminPass = 'pppppp';
+    try {
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, adminEmail, adminPass);
+      const uid = cred.user.uid;
+      await setDoc(doc(db, 'users', uid), {
+        id: uid,
+        name: 'System Administrator',
+        email: adminEmail,
+        role: 'SUPER_ADMIN',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
+      });
+      console.log("Admin seeded successfully.");
+      await signOut(secondaryAuth);
+    } catch (err: any) {
+      if (err.code !== 'auth/email-already-in-use') {
+        console.error("Admin seeding error:", err);
+      }
+    }
+  }
+
   // Only seed if templates are empty to avoid overwriting user data
   if (state.milestoneTemplates.length === 0) {
     console.log("Seeding Progress Assessment Templates...");
