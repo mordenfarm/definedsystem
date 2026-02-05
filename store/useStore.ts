@@ -210,7 +210,15 @@ export const useStore = create<AppState>((set, get) => {
         let userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data() as User;
-          if (userData.role !== role) { await signOut(auth); throw new Error('ROLE_MISMATCH'); }
+          // Allow SPECIALIST and ADMIN_SUPPORT to cross-authenticate as they share similar views/permissions
+          const isCompatible = (userData.role === 'SPECIALIST' || userData.role === 'ADMIN_SUPPORT') &&
+                               (role === 'SPECIALIST' || role === 'ADMIN_SUPPORT');
+
+          if (userData.role !== role && !isCompatible) {
+            await signOut(auth);
+            throw new Error('ROLE_MISMATCH');
+          }
+
           set({ user: userData, isLoggedIn: true, view: 'app', activeTab: 'dashboard' });
           get().notify('success', 'Welcome back!');
         } else { await signOut(auth); throw new Error('PROFILE_NOT_FOUND'); }

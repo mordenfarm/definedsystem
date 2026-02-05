@@ -63,6 +63,7 @@ export const StudentDirectory: React.FC = () => {
   const isAdmin = user?.role === 'SUPER_ADMIN';
   const isParent = user?.role === 'PARENT';
   const isSpecialist = user?.role === 'SPECIALIST';
+  const isSupport = user?.role === 'ADMIN_SUPPORT';
   const borderClass = "border-slate-300 dark:border-slate-800";
 
   const myStudents = useMemo(() => {
@@ -70,11 +71,18 @@ export const StudentDirectory: React.FC = () => {
       const parentProfile = parents.find(p => p.firebaseUid === user?.id);
       return parentProfile ? students.filter(s => s.id === parentProfile.studentId) : [];
     }
+
+    if (isSpecialist || isSupport) {
+      const staffProfile = staff.find(st => st.id === user?.id);
+      if (staffProfile && staffProfile.assignedClasses) {
+        return students.filter(s => staffProfile.assignedClasses.includes(s.assignedClass));
+      }
+    }
+
     return students;
-  }, [students, user, isParent, parents]);
+  }, [students, user, isParent, parents, isSpecialist, isSupport, staff]);
 
   const filteredStudents = (myStudents || []).filter(s => {
-    if (isSpecialist && s.assignedStaffId !== user?.id) return false;
     return s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase());
   });
 

@@ -101,7 +101,7 @@ const App: React.FC = () => {
       if (activeTab === 'fees') return <SchoolFees />;
     }
 
-    if (role === 'SPECIALIST') {
+    if (role === 'SPECIALIST' || role === 'ADMIN_SUPPORT') {
       if (activeTab === 'dashboard') return <TherapistDashboard />;
       if (activeTab === 'my-students' || activeTab === 'students') return <StudentDirectory />;
       if (activeTab === 'clinical') return <ClinicalABA />;

@@ -87,11 +87,26 @@ export const LessonLogs: React.FC = () => {
 
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
-      const isAssigned = (user?.role === 'SUPER_ADMIN') || s.assignedStaffId === user?.id;
-      if (!isAssigned) return false;
-      return s.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+      const isAdmin = user?.role === 'SUPER_ADMIN';
+      const isSpecialist = user?.role === 'SPECIALIST';
+      const isSupport = user?.role === 'ADMIN_SUPPORT';
+
+      if (isAdmin) return s.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+
+      if (isSpecialist || isSupport) {
+        const staffProfile = staff.find(st => st.id === user?.id);
+        if (staffProfile && staffProfile.assignedClasses) {
+          if (staffProfile.assignedClasses.includes(s.assignedClass)) {
+            return s.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+          }
+        } else if (isSpecialist && s.assignedStaffId === user?.id) {
+          return s.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+      }
+
+      return false;
     });
-  }, [students, user, searchTerm]);
+  }, [students, user, searchTerm, staff]);
 
   const handleAddStep = () => {
     setSteps([...steps, { id: Date.now().toString(), description: '', trials: Array(10).fill('-') }]);

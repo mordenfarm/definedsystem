@@ -46,6 +46,7 @@ export const ClinicalABA: React.FC = () => {
   const [viewingRecord, setViewingRecord] = useState<MilestoneRecord | null>(null);
 
   const isSpecialist = user?.role === 'SPECIALIST';
+  const isSupport = user?.role === 'ADMIN_SUPPORT';
   const isRestrictedRole = user?.role === 'PARENT' || user?.role === 'STUDENT';
 
   useEffect(() => {
@@ -63,10 +64,18 @@ export const ClinicalABA: React.FC = () => {
 
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
-      if (isSpecialist && s.assignedStaffId !== user?.id) return false;
+      if (isSpecialist || isSupport) {
+        const staffProfile = staff.find(st => st.id === user?.id);
+        if (staffProfile && staffProfile.assignedClasses) {
+          if (!staffProfile.assignedClasses.includes(s.assignedClass)) return false;
+        } else if (isSpecialist && s.assignedStaffId !== user?.id) {
+          // Fallback if no classes assigned but strictly assigned to staff
+          return false;
+        }
+      }
       return s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase());
     });
-  }, [students, isSpecialist, user, searchTerm]);
+  }, [students, isSpecialist, isSupport, user, searchTerm, staff]);
 
   const selectedStudent = students.find(s => s.id === selectedStudentIdForLog);
   const activeTemplate = milestoneTemplates.find(t => t.id === activeTemplateId);
