@@ -18,16 +18,16 @@ export const Footer: React.FC = () => {
           <div className="space-y-6">
             <div className="space-y-1">
               <h2 className="text-blue-600 font-black text-5xl md:text-6xl uppercase tracking-tighter leading-none">
-                Defined Domain
+                Defined Domains
               </h2>
               <p className="text-slate-900 dark:text-white font-bold text-xl md:text-2xl uppercase tracking-tight">
-                Behavioral Specialist
+                Behavioral Support Centre
               </p>
             </div>
             <div className="w-48 h-1 bg-slate-100 dark:bg-slate-800"></div>
             <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-sm font-medium">
               Individualized support for neurodiverse children. <br />
-              Setting the standard in clinical excellence across Zimbabwe since 2019.
+              Committed to inclusive developmental care in Zimbabwe since 2019.
             </p>
           </div>
 
@@ -72,19 +72,19 @@ export const Footer: React.FC = () => {
                  <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-blue-600 border border-slate-100 dark:border-slate-800">
                     <Mail size={14} />
                  </div>
-                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">admin@defineddomain.com</span>
+                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">defineddomains@gmail.com</span>
               </div>
               <div className="flex lg:flex-row-reverse items-center gap-4 group cursor-default">
                  <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-blue-600 border border-slate-100 dark:border-slate-800">
                     <Phone size={14} />
                  </div>
-                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">+263 775 926 454</span>
+                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">+263 772944837</span>
               </div>
               <div className="flex lg:flex-row-reverse items-center gap-4 group cursor-default">
                  <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-blue-600 border border-slate-100 dark:border-slate-800">
                     <MapPin size={14} />
                  </div>
-                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">27 Colnebrook Lane, Harare</span>
+                 <span className="text-sm font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">24 Eliot Street, Rhodene, Masvingo, Zimbabwe</span>
               </div>
             </div>
           </div>

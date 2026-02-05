@@ -5,7 +5,7 @@ import {
   Search, ChevronRight, X, LayoutGrid, List, 
   Trash2, Edit2, ArrowLeft, Loader2, Save, History
 } from 'lucide-react';
-import { Student } from '../types';
+import { Student, Role } from '../types';
 import { PersonalInfo } from './student-profile/PersonalInfo';
 import { HealthRecord } from './student-profile/HealthRecord';
 import { PerformanceMatrix } from './student-profile/PerformanceMatrix';
@@ -37,10 +37,33 @@ export const StudentDirectory: React.FC = () => {
   const [activeDetailTab, setActiveDetailTab] = useState<'Lesson Notes' | 'Growth Checks'>('Lesson Notes');
   const [timeFilter, setTimeFilter] = useState<'Weekly' | 'Bi-weekly' | 'Monthly' | 'Yearly'>('Weekly');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newStudent, setNewStudent] = useState<Partial<Student>>({
+    firstName: '',
+    lastName: '',
+    dob: '',
+    gender: 'Male',
+    parentName: '',
+    parentPhone: '',
+    parentEmail: '',
+    homeAddress: '',
+    diagnosis: '',
+    medicalRecords: '',
+    socialHistory: '',
+    targetBehaviors: '',
+    uniformSizes: '',
+    assignedClass: '',
+    assignedStaffId: '',
+    enrollmentDate: new Date().toISOString().split('T')[0]
+  });
+
+  const { addStudent } = useStore();
+  const [isAdding, setIsAdding] = useState(false);
 
   const isAdmin = user?.role === 'SUPER_ADMIN';
   const isParent = user?.role === 'PARENT';
   const isSpecialist = user?.role === 'SPECIALIST';
+  const isSupport = user?.role === 'ADMIN_SUPPORT';
   const borderClass = "border-slate-300 dark:border-slate-800";
 
   const myStudents = useMemo(() => {
@@ -48,11 +71,18 @@ export const StudentDirectory: React.FC = () => {
       const parentProfile = parents.find(p => p.firebaseUid === user?.id);
       return parentProfile ? students.filter(s => s.id === parentProfile.studentId) : [];
     }
+
+    if (isSpecialist || isSupport) {
+      const staffProfile = staff.find(st => st.id === user?.id);
+      if (staffProfile && staffProfile.assignedClasses) {
+        return students.filter(s => staffProfile.assignedClasses.includes(s.assignedClass));
+      }
+    }
+
     return students;
-  }, [students, user, isParent, parents]);
+  }, [students, user, isParent, parents, isSpecialist, isSupport, staff]);
 
   const filteredStudents = (myStudents || []).filter(s => {
-    if (isSpecialist && s.assignedStaffId !== user?.id) return false;
     return s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -86,6 +116,37 @@ export const StudentDirectory: React.FC = () => {
     }
   };
 
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAdding(true);
+    try {
+      await addStudent(newStudent as Student);
+      setShowAddModal(false);
+      setNewStudent({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: 'Male',
+        parentName: '',
+        parentPhone: '',
+        parentEmail: '',
+        homeAddress: '',
+        diagnosis: '',
+        medicalRecords: '',
+        socialHistory: '',
+        targetBehaviors: '',
+        uniformSizes: '',
+        assignedClass: '',
+        assignedStaffId: '',
+        enrollmentDate: new Date().toISOString().split('T')[0]
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-[1400px] mx-auto">
       <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-slate-200 pb-8">
@@ -93,6 +154,14 @@ export const StudentDirectory: React.FC = () => {
           <h1 className="text-4xl font-black uppercase text-slate-950 dark:text-white leading-none tracking-tight">Registry Node</h1>
           <p className="text-[10px] font-black text-slate-400 uppercase mt-3 tracking-widest italic">Viewing active student directory</p>
         </div>
+        {isAdmin && (
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-8 py-4 bg-blue-600 text-white rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg border border-slate-900 flex items-center gap-2"
+          >
+            Add New Student
+          </button>
+        )}
       </header>
 
       {!isParent && (
@@ -257,6 +326,95 @@ export const StudentDirectory: React.FC = () => {
                </aside>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Add Student Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
+          <div className="relative w-full max-w-4xl bg-white dark:bg-slate-950 border-2 border-slate-900 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <header className="p-8 border-b border-slate-900 flex items-center justify-between">
+              <h2 className="text-2xl font-black uppercase tracking-tight dark:text-white">Register New Student</h2>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-rose-600 transition-colors"><X size={28}/></button>
+            </header>
+
+            <form onSubmit={handleAddStudent} className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">First Name</label>
+                  <input required type="text" value={newStudent.firstName} onChange={e => setNewStudent({...newStudent, firstName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last Name</label>
+                  <input required type="text" value={newStudent.lastName} onChange={e => setNewStudent({...newStudent, lastName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date of Birth</label>
+                  <input required type="date" value={newStudent.dob} onChange={e => setNewStudent({...newStudent, dob: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Gender</label>
+                  <select required value={newStudent.gender} onChange={e => setNewStudent({...newStudent, gender: e.target.value as 'Male' | 'Female'})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-8">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-6">Guardian Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Name</label>
+                    <input required type="text" value={newStudent.parentName} onChange={e => setNewStudent({...newStudent, parentName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Phone</label>
+                    <input required type="tel" value={newStudent.parentPhone} onChange={e => setNewStudent({...newStudent, parentPhone: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Email</label>
+                    <input required type="email" value={newStudent.parentEmail} onChange={e => setNewStudent({...newStudent, parentEmail: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-8">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-6">Clinical & Schooling</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Class</label>
+                    <select required value={newStudent.assignedClass} onChange={e => setNewStudent({...newStudent, assignedClass: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                      <option value="">Select Class</option>
+                      {settings.classes.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Specialist</label>
+                    <select required value={newStudent.assignedStaffId} onChange={e => setNewStudent({...newStudent, assignedStaffId: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                      <option value="">Select Specialist</option>
+                      {staff.map(s => <option key={s.id} value={s.id}>{s.fullName}</option>)}
+                    </select>
+                  </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Home Address</label>
+                    <textarea rows={2} value={newStudent.homeAddress} onChange={e => setNewStudent({...newStudent, homeAddress: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-slate-900">
+                <button
+                  type="submit"
+                  disabled={isAdding}
+                  className="w-full py-6 bg-blue-600 text-white font-black uppercase tracking-widest rounded-none shadow-xl hover:bg-black transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                >
+                  {isAdding ? <Loader2 className="animate-spin" size={24} /> : "Create Student Account"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

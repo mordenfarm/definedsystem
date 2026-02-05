@@ -186,7 +186,7 @@ export const OnlineApplication: React.FC = () => {
                        <textarea 
                          required 
                          rows={3}
-                         placeholder="Residential address in Harare"
+                         placeholder="Residential address"
                          className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 focus:border-blue-500 rounded-none text-sm font-bold outline-none dark:text-white resize-none transition-all shadow-sm"
                          value={formData.address}
                          onChange={e => setFormData({...formData, address: e.target.value})}
