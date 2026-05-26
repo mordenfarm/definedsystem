@@ -30,15 +30,8 @@ const GatewayBg = "https://i.ibb.co/JR5Bhxpy/profileher.jpg";
 const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 const PAYMENT_API_BASE_URL = ((import.meta as any).env?.VITE_PAYMENT_API_BASE_URL || 'https://defined-domain-payments.vercel.app').replace(/\/$/, '');
 
-const PAYMENT_METHODS = [
-  { id: 'ECOCASH', name: 'Ecocash', logo: 'https://i.ibb.co/7NQSc15p/ecocash.png' },
-  { id: 'OMARI', name: "O'mari", logo: 'https://i.ibb.co/BDp0pNV/omari.png' },
-  { id: 'VISA_MASTERCARD', name: 'Visa / Mastercard', logo: 'https://i.ibb.co/tw59PtJJ/visamastercard.png' }
-];
-
 export const SchoolFees: React.FC = () => {
   const { user, students, parents, settings, updateStudent, notify, payments, addPayment, notices } = useStore();
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -75,7 +68,7 @@ export const SchoolFees: React.FC = () => {
   }, [notify]);
 
   const handlePayment = async () => {
-    if (!selectedMethod || !paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
+    if (!paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
     const amount = parseFloat(paymentAmount);
     if (isNaN(amount) || amount <= 0) {
       notify('error', 'Invalid amount.');
@@ -94,7 +87,6 @@ export const SchoolFees: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount,
-          paymentMethod: selectedMethod,
           studentId: studentProfile.id,
           studentName: studentProfile.fullName,
           studentFirebaseUid: studentProfile.firebaseUid,
@@ -116,7 +108,7 @@ export const SchoolFees: React.FC = () => {
   };
 
   const handleManualMockPayment = async () => {
-    if (!selectedMethod || !paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
+    if (!paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
     const amount = parseFloat(paymentAmount);
     setIsProcessing(true);
     try {
@@ -124,13 +116,12 @@ export const SchoolFees: React.FC = () => {
         studentId: studentProfile.id,
         studentName: studentProfile.fullName,
         amount,
-        method: PAYMENT_METHODS.find(m => m.id === selectedMethod)?.name || selectedMethod,
+        method: 'Manual',
         isMock: true,
         timestamp: new Date().toISOString()
       });
       await updateStudent(studentProfile.firebaseUid, { totalPaid: paidFees + amount });
       setShowSuccess(true);
-      setSelectedMethod(null);
       setPaymentAmount('');
     } finally {
       setIsProcessing(false);
@@ -199,45 +190,30 @@ export const SchoolFees: React.FC = () => {
               <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Make a Payment</h3>
            </div>
            
-           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-             {PAYMENT_METHODS.map(m => (
-               <button 
-                key={m.id} 
-                onClick={() => setSelectedMethod(m.id)}
-                className={`flex items-center gap-4 p-4 border transition-all rounded-none ${selectedMethod === m.id ? 'bg-blue-50 border-blue-600 dark:bg-blue-900/10' : 'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-800 hover:border-blue-400'}`}
-               >
-                 <img src={m.logo} className="h-6 w-auto grayscale group-hover:grayscale-0" />
-                 <span className="text-[9px] font-black uppercase tracking-tight text-slate-600 dark:text-slate-400">{m.name}</span>
-               </button>
-             ))}
+           <div className="pt-4 animate-in slide-in-from-top-2 duration-300">
+              <div className="bg-slate-50 dark:bg-slate-950 p-6 border border-slate-100 dark:border-slate-800 space-y-5">
+                 <div className="space-y-2">
+                    <label className="text-[8px] font-black uppercase text-slate-400">Amount to pay (USD)</label>
+                    <input 
+                      type="number" 
+                      value={paymentAmount} 
+                      onChange={e => setPaymentAmount(e.target.value)}
+                      placeholder="0.00" 
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 font-black font-mono text-xl outline-none focus:border-blue-600" 
+                    />
+                 </div>
+                 <button 
+                  onClick={handlePayment} 
+                  disabled={isProcessing || !paymentAmount}
+                  className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-lg disabled:opacity-50 active:scale-95 transition-all"
+                 >
+                   {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : 'Open ZB Smile&Pay Checkout'}
+                 </button>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                  ZB Smile&Pay will ask for the payment method, phone number, card details, and confirmation on its hosted page.
+                 </p>
+              </div>
            </div>
-
-           {selectedMethod && (
-             <div className="pt-4 animate-in slide-in-from-top-2 duration-300">
-                <div className="bg-slate-50 dark:bg-slate-950 p-6 border border-slate-100 dark:border-slate-800 space-y-5">
-                   <div className="space-y-2">
-                      <label className="text-[8px] font-black uppercase text-slate-400">Amount to pay (USD)</label>
-                      <input 
-                        type="number" 
-                        value={paymentAmount} 
-                        onChange={e => setPaymentAmount(e.target.value)}
-                        placeholder="0.00" 
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 font-black font-mono text-xl outline-none focus:border-blue-600" 
-                      />
-                   </div>
-                   <button 
-                    onClick={handlePayment} 
-                    disabled={isProcessing || !paymentAmount}
-                    className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-lg disabled:opacity-50 active:scale-95 transition-all"
-                   >
-                     {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : 'Continue to Smile&Pay'}
-                   </button>
-                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">
-                    You will be redirected to ZB Smile&Pay to complete this payment.
-                   </p>
-                </div>
-             </div>
-           )}
         </div>
 
         {/* Audit Registry (History) */}
