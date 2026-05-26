@@ -15,13 +15,6 @@ const PAYMENT_METHODS = [
   { id: 'Visa-Mastercard', name: 'Visa / Mastercard', logo: 'https://i.ibb.co/tw59PtJJ/visamastercard.png' }
 ];
 
-// Helper to extract the actual image source if an HTML snippet is pasted
-const extractSrcFromHtml = (html: string) => {
-  if (!html) return '';
-  const match = html.match(/src="([^"]+)"/);
-  return match ? match[1] : html.trim();
-};
-
 export const UniformShop: React.FC = () => {
   const { user, shopItems, addShopItem, deleteShopItem, addToCart, cart, isLoggedIn, updateCartQuantity, removeFromCart, placeOrder, students, parents } = useStore();
   const [filter, setFilter] = useState<'All' | 'Required' | 'Optional'>('All');
@@ -33,12 +26,16 @@ export const UniformShop: React.FC = () => {
 
   // Management state for Admin
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isAddModalClosing, setIsAddModalClosing] = useState(false);
   const [newItem, setNewItem] = useState({ name: '', price: '', imageUrl: '', category: 'Required' as 'Required' | 'Optional' });
+  const [imageFileName, setImageFileName] = useState('');
   const [itemToDelete, setItemToDelete] = useState<ShopItem | null>(null);
 
   const isAdmin = user?.role === 'SUPER_ADMIN';
   // Parents, students and visitors can shop
   const canShop = !user || user?.role === 'PARENT' || user?.role === 'STUDENT';
+  const googleInput = "w-full px-5 py-4 border border-slate-300 dark:border-slate-700 rounded-[15px] bg-white dark:bg-slate-950 font-medium text-slate-900 dark:text-white outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm";
+  const googleLabel = "text-[11px] font-semibold tracking-wide text-slate-600 dark:text-slate-300 ml-1";
 
   const subtotal = (cart || []).reduce((sum, item) => sum + (item.price * item.quantity), 0);
   
@@ -75,16 +72,39 @@ export const UniformShop: React.FC = () => {
 
   const handleAddItem = async () => {
     if (!newItem.name || !newItem.price || !newItem.imageUrl) return;
-    const finalUrl = extractSrcFromHtml(newItem.imageUrl);
     await addShopItem({
       name: newItem.name,
       price: parseFloat(newItem.price),
-      imageUrl: finalUrl,
+      imageUrl: newItem.imageUrl,
       category: newItem.category,
       stock: 100
     });
     setNewItem({ name: '', price: '', imageUrl: '', category: 'Required' });
-    setShowAddModal(false);
+    setImageFileName('');
+    closeAddUniformForm(true);
+  };
+
+  function openAddUniformForm() {
+    setIsAddModalClosing(false);
+    setShowAddModal(true);
+  }
+
+  function closeAddUniformForm(_force = false) {
+    setIsAddModalClosing(true);
+    window.setTimeout(() => {
+      setShowAddModal(false);
+      setIsAddModalClosing(false);
+    }, 180);
+  }
+
+  const handleUniformImageSelect = (file?: File) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setNewItem(prev => ({ ...prev, imageUrl: String(reader.result || '') }));
+      setImageFileName(file.name);
+    };
+    reader.readAsDataURL(file);
   };
 
   const confirmDeleteItem = async () => {
@@ -116,7 +136,7 @@ export const UniformShop: React.FC = () => {
         <div className="flex items-center gap-2">
           {isAdmin && !showCartView && (
             <button 
-              onClick={() => setShowAddModal(true)}
+              onClick={openAddUniformForm}
               className="px-6 py-3 bg-slate-900 text-white rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 border border-slate-800 shadow-lg"
             >
               <PlusCircle size={14} /> Add New Uniform
@@ -276,39 +296,43 @@ export const UniformShop: React.FC = () => {
 
       {/* Admin: Add Item Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[1000] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6">
-           <div className="bg-white dark:bg-slate-900 max-w-md w-full border border-slate-200 dark:border-slate-800 rounded-none overflow-hidden animate-in zoom-in-95">
-              <header className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50">
-                 <h3 className="text-base font-black uppercase tracking-widest dark:text-white">Add New Item</h3>
-                 <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-none transition-colors"><X size={24}/></button>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6">
+           <div className={`absolute inset-0 bg-slate-100/95 dark:bg-slate-950/90 backdrop-blur-md ${isAddModalClosing ? 'form-backdrop-out' : 'form-backdrop-in'}`} onClick={() => closeAddUniformForm()} />
+           <div className={`relative bg-white dark:bg-slate-900 max-w-xl w-full border border-slate-200 dark:border-slate-800 rounded-[15px] overflow-hidden shadow-2xl max-h-[92vh] overflow-y-auto sidebar-scrollbar ${isAddModalClosing ? 'form-screen-out' : 'form-screen-in'}`}>
+              <header className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white/95 dark:bg-slate-900/95 backdrop-blur-md sticky top-0 z-10">
+                 <div>
+                   <h3 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Add New Uniform</h3>
+                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Save a real product photo into the shop.</p>
+                 </div>
+                 <button onClick={() => closeAddUniformForm()} className="p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[15px] text-slate-400 hover:text-rose-500 transition-colors"><X size={22}/></button>
               </header>
-              <div className="p-10 space-y-8">
+              <div className="p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/20">
                  <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Item Name</label>
+                    <label className={googleLabel}>Item Name</label>
                     <input 
                       value={newItem.name} 
                       onChange={e => setNewItem({...newItem, name: e.target.value})}
-                      className="w-full p-5 border-2 border-slate-100 dark:border-slate-800 rounded-none bg-slate-50 dark:bg-slate-950 font-black text-sm outline-none focus:border-blue-500 transition-all shadow-inner" 
+                      className={googleInput}
                       placeholder="e.g. Academy Tracksuit"
                     />
                  </div>
-                 <div className="grid grid-cols-2 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Price (USD)</label>
+                        <label className={googleLabel}>Price (USD)</label>
                         <input 
                           type="number"
                           value={newItem.price} 
                           onChange={e => setNewItem({...newItem, price: e.target.value})}
-                          className="w-full p-5 border-2 border-slate-100 dark:border-slate-800 rounded-none bg-slate-50 dark:bg-slate-950 font-mono font-black text-lg outline-none focus:border-blue-500 transition-all shadow-inner" 
+                          className={`${googleInput} font-mono`}
                           placeholder="0.00"
                         />
                     </div>
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category</label>
+                        <label className={googleLabel}>Category</label>
                         <select 
                           value={newItem.category} 
                           onChange={e => setNewItem({...newItem, category: e.target.value as any})}
-                          className="w-full p-5 border-2 border-slate-100 dark:border-slate-800 rounded-none bg-slate-50 dark:bg-slate-950 font-black uppercase text-[10px] outline-none cursor-pointer shadow-inner"
+                          className={`${googleInput} appearance-none cursor-pointer`}
                         >
                            <option value="Required">Required</option>
                            <option value="Optional">Optional</option>
@@ -316,17 +340,41 @@ export const UniformShop: React.FC = () => {
                     </div>
                  </div>
                  <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Product Image (URL or HTML Link)</label>
-                    <textarea 
-                      value={newItem.imageUrl} 
-                      onChange={e => setNewItem({...newItem, imageUrl: e.target.value})}
-                      className="w-full p-5 border-2 border-slate-100 dark:border-slate-800 rounded-none bg-slate-50 dark:bg-slate-950 font-mono text-[10px] outline-none focus:border-blue-500 h-32 resize-none shadow-inner" 
-                      placeholder="Paste image link or <img src=...> code here..."
-                    />
+                    <label className={googleLabel}>Product Image</label>
+                    <label className="block cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={e => handleUniformImageSelect(e.target.files?.[0])}
+                      />
+                      <div className="min-h-64 border border-dashed border-slate-300 dark:border-slate-700 rounded-[15px] bg-white dark:bg-slate-950 flex items-center justify-center overflow-hidden hover:border-blue-600 hover:ring-4 hover:ring-blue-500/10 transition-all shadow-sm">
+                        {newItem.imageUrl ? (
+                          <img src={newItem.imageUrl} className="w-full h-64 object-cover" alt="Uniform preview" />
+                        ) : (
+                          <div className="text-center px-8">
+                            <ImageIcon size={34} className="mx-auto text-slate-300 mb-4" />
+                            <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">Choose Image From Computer</p>
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                    {imageFileName && (
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-[10px] font-bold text-slate-400 truncate">{imageFileName}</p>
+                        <button
+                          type="button"
+                          onClick={() => { setNewItem({ ...newItem, imageUrl: '' }); setImageFileName(''); }}
+                          className="px-3 py-1.5 rounded-[15px] text-[10px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
                  </div>
                  <button 
                   onClick={handleAddItem}
-                  className="w-full py-6 bg-blue-600 text-white font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl hover:bg-slate-950 transition-all active:scale-95"
+                  className="w-full py-5 bg-blue-600 text-white font-bold tracking-wide text-sm rounded-[15px] shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-[0.99]"
                  >
                     Save to Shop
                  </button>

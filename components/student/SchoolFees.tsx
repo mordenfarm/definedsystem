@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { 
   DollarSign, 
@@ -28,11 +28,12 @@ import { PaymentRecord } from '../../types';
 
 const GatewayBg = "https://i.ibb.co/JR5Bhxpy/profileher.jpg";
 const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
+const PAYMENT_API_BASE_URL = ((import.meta as any).env?.VITE_PAYMENT_API_BASE_URL || 'https://defined-domain-payments.vercel.app').replace(/\/$/, '');
 
 const PAYMENT_METHODS = [
-  { id: 'ecocash', name: 'Ecocash', logo: 'https://i.ibb.co/7NQSc15p/ecocash.png' },
-  { id: 'omari', name: "O'mari", logo: 'https://i.ibb.co/BDp0pNV/omari.png' },
-  { id: 'visamastercard', name: 'Visa / Mastercard', logo: 'https://i.ibb.co/tw59PtJJ/visamastercard.png' }
+  { id: 'ECOCASH', name: 'Ecocash', logo: 'https://i.ibb.co/7NQSc15p/ecocash.png' },
+  { id: 'OMARI', name: "O'mari", logo: 'https://i.ibb.co/BDp0pNV/omari.png' },
+  { id: 'VISA_MASTERCARD', name: 'Visa / Mastercard', logo: 'https://i.ibb.co/tw59PtJJ/visamastercard.png' }
 ];
 
 export const SchoolFees: React.FC = () => {
@@ -64,6 +65,15 @@ export const SchoolFees: React.FC = () => {
   const paidFees = studentProfile?.totalPaid || 0;
   const balance = Math.max(0, totalFees - paidFees);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderReference = params.get('orderReference');
+    if (params.get('payment') === 'return' && orderReference) {
+      notify('info', `Payment returned from Smile&Pay. Confirmation is being processed for ${orderReference}.`);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [notify]);
+
   const handlePayment = async () => {
     if (!selectedMethod || !paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
     const amount = parseFloat(paymentAmount);
@@ -72,9 +82,43 @@ export const SchoolFees: React.FC = () => {
       return;
     }
 
+    if (amount > balance && balance > 0) {
+      notify('error', 'Amount cannot be more than the current balance.');
+      return;
+    }
+
     setIsProcessing(true);
-    await new Promise(r => setTimeout(r, 1500));
-    
+    try {
+      const response = await fetch(`${PAYMENT_API_BASE_URL}/api/initiate-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          paymentMethod: selectedMethod,
+          studentId: studentProfile.id,
+          studentName: studentProfile.fullName,
+          studentFirebaseUid: studentProfile.firebaseUid,
+          parentUserId: user?.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.paymentUrl) {
+        throw new Error(data.message || 'Payment initiation failed.');
+      }
+
+      window.location.href = data.paymentUrl;
+    } catch (error: any) {
+      notify('error', error.message || 'Could not open Smile&Pay checkout.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleManualMockPayment = async () => {
+    if (!selectedMethod || !paymentAmount || !studentProfile || !studentProfile.firebaseUid) return;
+    const amount = parseFloat(paymentAmount);
+    setIsProcessing(true);
     try {
       await addPayment({
         studentId: studentProfile.id,
@@ -186,8 +230,11 @@ export const SchoolFees: React.FC = () => {
                     disabled={isProcessing || !paymentAmount}
                     className="w-full py-4 bg-slate-900 dark:bg-blue-600 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-lg disabled:opacity-50 active:scale-95 transition-all"
                    >
-                     {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : 'Confirm Payment Transaction'}
+                     {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : 'Continue to Smile&Pay'}
                    </button>
+                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                    You will be redirected to ZB Smile&Pay to complete this payment.
+                   </p>
                 </div>
              </div>
            )}

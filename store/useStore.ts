@@ -345,7 +345,7 @@ export const useStore = create<AppState>((set, get) => {
         }
         
         await signOut(secondaryAuth);
-        get().notify('success', `Student and Guardian registered.`);
+        get().notify('success', `Student account created. Parent account has also been created for ${studentData.parentName}.`);
       } catch (err: any) { 
         await signOut(secondaryAuth);
         get().notify('error', err.message);

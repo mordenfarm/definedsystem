@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { 
   Search, ChevronRight, X, LayoutGrid, List, 
-  Trash2, Edit2, ArrowLeft, Loader2, Save, History
+  Trash2, Edit2, ArrowLeft, Loader2, Save, History, Image as ImageIcon
 } from 'lucide-react';
 import { Student, Role } from '../types';
 import { PersonalInfo } from './student-profile/PersonalInfo';
@@ -38,6 +38,8 @@ export const StudentDirectory: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState<'Weekly' | 'Bi-weekly' | 'Monthly' | 'Yearly'>('Weekly');
   const [isDeleting, setIsDeleting] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isAddModalClosing, setIsAddModalClosing] = useState(false);
+  const [studentImageName, setStudentImageName] = useState('');
   const [newStudent, setNewStudent] = useState<Partial<Student>>({
     firstName: '',
     lastName: '',
@@ -54,6 +56,7 @@ export const StudentDirectory: React.FC = () => {
     uniformSizes: '',
     assignedClass: '',
     assignedStaffId: '',
+    imageUrl: '',
     enrollmentDate: new Date().toISOString().split('T')[0]
   });
 
@@ -65,6 +68,10 @@ export const StudentDirectory: React.FC = () => {
   const isSpecialist = user?.role === 'SPECIALIST';
   const isSupport = user?.role === 'ADMIN_SUPPORT';
   const borderClass = "border-slate-300 dark:border-slate-800";
+  const googleInput = "w-full px-5 py-4 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-[15px] text-sm font-medium text-slate-900 dark:text-white outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm";
+  const googleLabel = "text-[11px] font-semibold tracking-wide text-slate-600 dark:text-slate-300 ml-1";
+  const googleSection = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[15px] p-5 md:p-6 shadow-sm space-y-6";
+  const googleStepBadge = "text-[10px] font-bold uppercase tracking-[0.18em] text-blue-700 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-[15px] border border-blue-100 dark:border-blue-800";
 
   const myStudents = useMemo(() => {
     if (isParent) {
@@ -121,7 +128,7 @@ export const StudentDirectory: React.FC = () => {
     setIsAdding(true);
     try {
       await addStudent(newStudent as Student);
-      setShowAddModal(false);
+      closeAddStudentForm(true);
       setNewStudent({
         firstName: '',
         lastName: '',
@@ -138,14 +145,40 @@ export const StudentDirectory: React.FC = () => {
         uniformSizes: '',
         assignedClass: '',
         assignedStaffId: '',
+        imageUrl: '',
         enrollmentDate: new Date().toISOString().split('T')[0]
       });
+      setStudentImageName('');
     } catch (err) {
       console.error(err);
     } finally {
       setIsAdding(false);
     }
   };
+
+  function openAddStudentForm() {
+    setIsAddModalClosing(false);
+    setShowAddModal(true);
+  }
+
+  function closeAddStudentForm(force = false) {
+    if (isAdding && !force) return;
+    setIsAddModalClosing(true);
+    window.setTimeout(() => {
+      setShowAddModal(false);
+      setIsAddModalClosing(false);
+    }, 180);
+  }
+
+  function handleStudentImageSelect(file?: File) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setNewStudent(prev => ({ ...prev, imageUrl: String(reader.result || '') }));
+      setStudentImageName(file.name);
+    };
+    reader.readAsDataURL(file);
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-[1400px] mx-auto">
@@ -156,7 +189,7 @@ export const StudentDirectory: React.FC = () => {
         </div>
         {isAdmin && (
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={openAddStudentForm}
             className="px-8 py-4 bg-blue-600 text-white rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg border border-slate-900 flex items-center gap-2"
           >
             Add New Student
@@ -331,84 +364,112 @@ export const StudentDirectory: React.FC = () => {
 
       {/* Add Student Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
-          <div className="relative w-full max-w-4xl bg-white dark:bg-slate-950 border-2 border-slate-900 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <header className="p-8 border-b border-slate-900 flex items-center justify-between">
-              <h2 className="text-2xl font-black uppercase tracking-tight dark:text-white">Register New Student</h2>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-rose-600 transition-colors"><X size={28}/></button>
+        <div className="fixed inset-0 z-[1200] overflow-hidden">
+          <div className={`absolute inset-0 bg-slate-100/95 dark:bg-slate-950/90 backdrop-blur-md ${isAddModalClosing ? 'form-backdrop-out' : 'form-backdrop-in'}`} onClick={() => closeAddStudentForm()} />
+          <div className={`relative h-full w-full bg-white dark:bg-slate-950 shadow-2xl flex flex-col overflow-x-hidden ${isAddModalClosing ? 'form-screen-out' : 'form-screen-in'}`}>
+            <header className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white/95 dark:bg-slate-950/95 backdrop-blur-md sticky top-0 z-10">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Register New Student</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Create a student profile and guardian account.</p>
+              </div>
+              <button onClick={() => closeAddStudentForm()} className="p-3 rounded-[15px] text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X size={24}/></button>
             </header>
 
-            <form onSubmit={handleAddStudent} className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form onSubmit={handleAddStudent} className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-10 space-y-8 custom-scrollbar bg-slate-50/50 dark:bg-slate-950">
+              <div className={`${googleSection} max-w-7xl mx-auto`}>
+                <div className="flex items-center gap-3">
+                  <span className={googleStepBadge}>01 Identity</span>
+                  <div className="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">First Name</label>
-                  <input required type="text" value={newStudent.firstName} onChange={e => setNewStudent({...newStudent, firstName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  <label className={googleLabel}>First Name</label>
+                  <input required type="text" value={newStudent.firstName} onChange={e => setNewStudent({...newStudent, firstName: e.target.value})} className={googleInput} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last Name</label>
-                  <input required type="text" value={newStudent.lastName} onChange={e => setNewStudent({...newStudent, lastName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  <label className={googleLabel}>Last Name</label>
+                  <input required type="text" value={newStudent.lastName} onChange={e => setNewStudent({...newStudent, lastName: e.target.value})} className={googleInput} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date of Birth</label>
-                  <input required type="date" value={newStudent.dob} onChange={e => setNewStudent({...newStudent, dob: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                  <label className={googleLabel}>Date of Birth</label>
+                  <input required type="date" value={newStudent.dob} onChange={e => setNewStudent({...newStudent, dob: e.target.value})} className={googleInput} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Gender</label>
-                  <select required value={newStudent.gender} onChange={e => setNewStudent({...newStudent, gender: e.target.value as 'Male' | 'Female'})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                  <label className={googleLabel}>Gender</label>
+                  <select required value={newStudent.gender} onChange={e => setNewStudent({...newStudent, gender: e.target.value as 'Male' | 'Female'})} className={`${googleInput} appearance-none cursor-pointer`}>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
                 </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className={googleLabel}>Student Profile Image</label>
+                  <label className="flex items-center gap-3 px-4 py-3 rounded-[15px] bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 cursor-pointer hover:border-blue-500 hover:ring-4 hover:ring-blue-500/10 transition-all shadow-sm">
+                    <input type="file" accept="image/*" className="sr-only" onChange={e => handleStudentImageSelect(e.target.files?.[0])} />
+                    <div className="w-11 h-11 rounded-[12px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden flex items-center justify-center text-slate-400">
+                      {newStudent.imageUrl ? <img src={newStudent.imageUrl} className="w-full h-full object-cover" alt="Student preview" /> : <ImageIcon size={18} />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-200 truncate">{studentImageName || 'Choose image from device'}</p>
+                      <p className="text-[11px] text-slate-400">The image is converted to base64 for the database.</p>
+                    </div>
+                  </label>
+                </div>
+                </div>
               </div>
 
-              <div className="border-t border-slate-100 dark:border-slate-800 pt-8">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-6">Guardian Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`${googleSection} max-w-7xl mx-auto`}>
+                <div className="flex items-center gap-3">
+                  <span className={googleStepBadge}>02 Guardian</span>
+                  <div className="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Name</label>
-                    <input required type="text" value={newStudent.parentName} onChange={e => setNewStudent({...newStudent, parentName: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                    <label className={googleLabel}>Guardian Name</label>
+                    <input required type="text" value={newStudent.parentName} onChange={e => setNewStudent({...newStudent, parentName: e.target.value})} className={googleInput} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Phone</label>
-                    <input required type="tel" value={newStudent.parentPhone} onChange={e => setNewStudent({...newStudent, parentPhone: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                    <label className={googleLabel}>Guardian Phone</label>
+                    <input required type="tel" value={newStudent.parentPhone} onChange={e => setNewStudent({...newStudent, parentPhone: e.target.value})} className={googleInput} />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Guardian Email</label>
-                    <input required type="email" value={newStudent.parentEmail} onChange={e => setNewStudent({...newStudent, parentEmail: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                    <label className={googleLabel}>Guardian Email</label>
+                    <input required type="email" value={newStudent.parentEmail} onChange={e => setNewStudent({...newStudent, parentEmail: e.target.value})} className={googleInput} />
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-slate-100 dark:border-slate-800 pt-8">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-6">Clinical & Schooling</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`${googleSection} max-w-7xl mx-auto`}>
+                <div className="flex items-center gap-3">
+                  <span className={googleStepBadge}>03 Schooling</span>
+                  <div className="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Class</label>
-                    <select required value={newStudent.assignedClass} onChange={e => setNewStudent({...newStudent, assignedClass: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                    <label className={googleLabel}>Assigned Class</label>
+                    <select required value={newStudent.assignedClass} onChange={e => setNewStudent({...newStudent, assignedClass: e.target.value})} className={`${googleInput} appearance-none cursor-pointer`}>
                       <option value="">Select Class</option>
                       {settings.classes.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Specialist</label>
-                    <select required value={newStudent.assignedStaffId} onChange={e => setNewStudent({...newStudent, assignedStaffId: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white">
+                    <label className={googleLabel}>Assigned Specialist</label>
+                    <select required value={newStudent.assignedStaffId} onChange={e => setNewStudent({...newStudent, assignedStaffId: e.target.value})} className={`${googleInput} appearance-none cursor-pointer`}>
                       <option value="">Select Specialist</option>
                       {staff.map(s => <option key={s.id} value={s.id}>{s.fullName}</option>)}
                     </select>
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Home Address</label>
-                    <textarea rows={2} value={newStudent.homeAddress} onChange={e => setNewStudent({...newStudent, homeAddress: e.target.value})} className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-900 rounded-none text-sm font-bold dark:text-white" />
+                    <label className={googleLabel}>Home Address</label>
+                    <textarea rows={2} value={newStudent.homeAddress} onChange={e => setNewStudent({...newStudent, homeAddress: e.target.value})} className={googleInput} />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-slate-900">
+              <div className="max-w-7xl mx-auto w-full pb-4">
                 <button
                   type="submit"
                   disabled={isAdding}
-                  className="w-full py-6 bg-blue-600 text-white font-black uppercase tracking-widest rounded-none shadow-xl hover:bg-black transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                  className="w-full py-5 bg-blue-600 text-white font-bold tracking-wide rounded-[15px] shadow-xl shadow-blue-600/20 hover:bg-blue-700 active:scale-[0.99] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {isAdding ? <Loader2 className="animate-spin" size={24} /> : "Create Student Account"}
                 </button>
