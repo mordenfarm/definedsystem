@@ -26,7 +26,7 @@ import { CareersPage } from './components/landing/CareersPage';
 import { NoticesSlideOver } from './components/common/NoticesSlideOver';
 import { AdminNotices } from './components/AdminNotices';
 import { SystemLogs } from './components/SystemLogs';
-import { AlertCircle, BarChart3, Bell, CheckCircle2, Home, Info, LogOut, Receipt, X } from 'lucide-react';
+import { AlertCircle, BarChart3, Bell, CheckCircle2, FileText, Home, Info, LogOut, Receipt, X } from 'lucide-react';
 
 const NotificationHost = () => {
   const { notifications, removeNotification } = useStore();

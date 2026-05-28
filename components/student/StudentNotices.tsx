@@ -20,7 +20,7 @@ export const StudentNotices: React.FC = () => {
     if (!user) return [];
     return notices
       .filter(n => n.target === 'ALL' || n.target === user.role)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [notices, user]);
 
   return (
@@ -46,7 +46,7 @@ export const StudentNotices: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {filteredNotices.map((notice) => {
-            const isNew = (new Date().getTime() - new Date(notice.date).getTime()) < (3 * 24 * 60 * 60 * 1000);
+            const isNew = (new Date().getTime() - new Date(notice.timestamp).getTime()) < (3 * 24 * 60 * 60 * 1000);
 
             return (
               <div
@@ -75,7 +75,7 @@ export const StudentNotices: React.FC = () => {
                       <div className="flex items-center gap-1.5 text-slate-400">
                         <Clock size={10} />
                         <span className="text-[10px] font-bold uppercase tracking-tighter">
-                          {new Date(notice.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                          {new Date(notice.timestamp).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                         </span>
                       </div>
                     </div>

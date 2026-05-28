@@ -239,7 +239,7 @@ export const StudentDashboard: React.FC = () => {
 
   const latestNotices5 = notices
     .filter(n => n.target === 'ALL' || n.target === user?.role)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 5);
 
   return (
@@ -371,7 +371,7 @@ export const StudentDashboard: React.FC = () => {
           {latestNotices5.length === 0 ? (
             <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-8 text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest border border-dashed border-slate-200 dark:border-slate-800">No active notices</div>
           ) : latestNotices5.map(notice => {
-            const isNew = (new Date().getTime() - new Date(notice.date).getTime()) < (3 * 24 * 60 * 60 * 1000);
+            const isNew = (new Date().getTime() - new Date(notice.timestamp).getTime()) < (3 * 24 * 60 * 60 * 1000);
             return (
               <button
                 key={notice.id}
@@ -388,7 +388,7 @@ export const StudentDashboard: React.FC = () => {
                       <span className="px-1.5 py-0.5 bg-blue-600 text-white text-[7px] font-black rounded uppercase animate-pulse">New</span>
                     )}
                   </div>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter truncate">{new Date(notice.date).toLocaleDateString(undefined, { dateStyle: 'medium' })} • {notice.content}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter truncate">{new Date(notice.timestamp).toLocaleDateString(undefined, { dateStyle: 'medium' })} • {notice.content}</p>
                 </div>
                 <ChevronRight size={14} className="text-slate-300 group-hover:text-blue-600 transition-colors" />
               </button>
