@@ -21,6 +21,7 @@ import {
 import { Student, SessionLog, MilestoneRecord } from '../types';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import QRCode from 'qrcode';
 
 type TimeFilter = 'Week' | 'Month' | 'Year' | 'All';
 type ReportType = 'clinical' | 'growth';
@@ -66,15 +67,107 @@ export const AdminClinicalLogs: React.FC = () => {
   const handleExportPDF = async () => {
     if (!selectedStudent || !activeLog) return;
     setIsExporting(true);
-    const doc = new jsPDF();
-    doc.text('PROGRESS REPORT', 15, 20);
-    autoTable(doc, {
-      startY: 30,
-      head: [['Step', 'Description', 'Outcome']],
-      body: activeLog.steps.map((s, i) => [(i+1).toString(), s.description, s.promptLevel === '+' ? 'Achieved' : 'Support']),
-    });
-    doc.save(`Report_${selectedStudent.id}.pdf`);
-    setIsExporting(false);
+
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+
+      // Header Branding
+      doc.setFillColor(0, 45, 80); // #002D50
+      doc.rect(0, 0, pageWidth, 40, 'F');
+
+      // Logo
+      try {
+        const logoUrl = 'https://i.ibb.co/spSVqW8s/definedlogo.png';
+        doc.addImage(logoUrl, 'PNG', margin, 8, 24, 24);
+      } catch (e) {
+        console.error("Logo failed to load for PDF", e);
+      }
+
+      // School Name & Details
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('DEFINED DOMAINS BEHAVIORAL SUPPORT CENTRE', 45, 18);
+
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('24 Eliot Street, Rhodene, Masvingo, Zimbabwe', 45, 24);
+      doc.text('Contact: +263 772944837 | Email: defineddomains@gmail.com', 45, 28);
+
+      // Report Title Card
+      doc.setFillColor(248, 250, 252); // slate-50
+      doc.rect(margin, 50, pageWidth - (margin * 2), 30, 'F');
+
+      doc.setTextColor(30, 41, 59); // slate-800
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CLINICAL PROGRESS REPORT', margin + 5, 60);
+
+      doc.setFontSize(18);
+      doc.text(activeLog.targetBehavior.toUpperCase(), margin + 5, 72);
+
+      // Student & Meta Info
+      doc.setTextColor(100, 116, 139); // slate-500
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Student: ${selectedStudent.fullName}`, margin, 95);
+      doc.text(`ID: ${selectedStudent.id}`, margin, 100);
+      doc.text(`Date: ${new Date(activeLog.date).toLocaleDateString()}`, pageWidth - margin - 40, 95);
+      doc.text(`Score: ${activeLog.independenceScore}% Mastery`, pageWidth - margin - 40, 100);
+
+      // Table of Steps
+      autoTable(doc, {
+        startY: 110,
+        head: [['#', 'STEP DESCRIPTION', 'OUTCOME']],
+        body: activeLog.steps.map((s, i) => [
+          (i + 1).toString(),
+          s.description.toUpperCase(),
+          s.promptLevel === '+' ? 'ACHIEVED' : 'SUPPORT GIVEN'
+        ]),
+        headStyles: {
+          fillColor: [0, 45, 80],
+          textColor: 255,
+          fontSize: 8,
+          fontStyle: 'bold',
+          cellPadding: 4
+        },
+        bodyStyles: {
+          fontSize: 8,
+          cellPadding: 4
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252]
+        },
+        columnStyles: {
+          0: { cellWidth: 10 },
+          2: { cellWidth: 40, fontStyle: 'bold' }
+        }
+      });
+
+      // Footer with QR Code
+      const finalY = (doc as any).lastAutoTable.finalY + 20;
+
+      if (finalY < 250) {
+        // Verification QR
+        const qrData = `DD-VERIFY-${activeLog.id}-${selectedStudent.id}`;
+        const qrCodeDataUrl = await QRCode.toDataURL(qrData);
+        doc.addImage(qrCodeDataUrl, 'PNG', margin, finalY, 25, 25);
+
+        doc.setFontSize(7);
+        doc.setTextColor(148, 163, 184);
+        doc.text('This is an electronically generated report.', margin + 30, finalY + 10);
+        doc.text('Scan QR code to verify authenticity.', margin + 30, finalY + 14);
+        doc.text(`Generated on ${new Date().toLocaleString()}`, margin + 30, finalY + 18);
+      }
+
+      doc.save(`Report_${selectedStudent.id}_${new Date(activeLog.date).toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error("PDF Export failed", error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (!selectedStudent) return <div className="p-20 text-center font-black animate-pulse uppercase tracking-widest text-slate-400">Loading Records...</div>;

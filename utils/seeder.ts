@@ -277,6 +277,86 @@ export const autoSeed = async (secondaryAuth?: Auth) => {
       } catch (firestoreErr) {
         console.error("Admin Firestore seeding error:", firestoreErr);
       }
+
+      // Seed a Test Parent
+      try {
+        const parentEmail = 'parent@gmail.com';
+        const parentPass = '000000';
+        let puid = '';
+        try {
+          const pcred = await createUserWithEmailAndPassword(secondaryAuth, parentEmail, parentPass);
+          puid = pcred.user.uid;
+        } catch (e: any) {
+          if (e.code === 'auth/email-already-in-use') {
+            const pcred = await signInWithEmailAndPassword(secondaryAuth, parentEmail, parentPass);
+            puid = pcred.user.uid;
+          }
+        }
+
+        if (puid) {
+          await setDoc(doc(db, 'users', puid), {
+            id: puid,
+            name: 'Test Parent',
+            email: parentEmail,
+            role: 'PARENT',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Parent'
+          });
+          await setDoc(doc(db, 'parents', puid), {
+            id: puid,
+            name: 'Test Parent',
+            email: parentEmail,
+            studentId: 'DD001',
+            studentFullName: 'Test Student',
+            firebaseUid: puid
+          });
+
+          // Seed a corresponding student
+          const suid = 'test-student-uid';
+          await setDoc(doc(db, 'students', suid), {
+            id: 'DD001',
+            fullName: 'Test Student',
+            firstName: 'Test',
+            lastName: 'Student',
+            firebaseUid: suid,
+            totalPaid: 250,
+            assignedClass: 'Class A',
+            parentEmail: parentEmail,
+            parentName: 'Test Parent'
+          });
+
+          // Seed some notices
+          const noticeRef = doc(db, 'notices', 'test-notice-1');
+          await setDoc(noticeRef, {
+            id: 'test-notice-1',
+            title: 'Welcome to the New Portal',
+            content: 'We have updated our system to serve you better. Enjoy the new features!',
+            type: 'General',
+            target: 'ALL',
+            authorId: 'system',
+            authorName: 'Admin',
+            timestamp: new Date().toISOString(),
+            replies: [],
+            views: []
+          });
+
+          const noticeRef2 = doc(db, 'notices', 'test-notice-2');
+          await setDoc(noticeRef2, {
+            id: 'test-notice-2',
+            title: 'Tuition Update',
+            content: 'Please check your tuition status in the dashboard.',
+            type: 'Fees',
+            target: 'PARENT',
+            authorId: 'system',
+            authorName: 'Admin',
+            timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days ago
+            replies: [],
+            views: []
+          });
+        }
+      } catch (err) {
+        console.error("Test Parent seeding error:", err);
+      }
+
       await signOut(secondaryAuth);
     }
   }

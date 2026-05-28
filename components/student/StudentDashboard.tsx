@@ -160,55 +160,74 @@ export const StudentDashboard: React.FC = () => {
 
   if (activeTab === 'progress') {
     return (
-      <div className="space-y-5">
+      <div className="space-y-6 pb-10">
         <header className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-black text-[#8b5cf6]">Progress graph</p>
-            <h1 className="text-2xl font-black tracking-tight">Learning pulse</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Performance Metrics</p>
+            <h1 className="text-2xl font-black tracking-tight uppercase text-slate-900 dark:text-white">Learning Progress</h1>
           </div>
-          <div className="h-11 w-11 rounded-full bg-white shadow-lg grid place-items-center">
-            <TrendingUp size={18} className="text-[#7c3aed]" />
+          <div className="h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-blue-500/10 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+            <TrendingUp size={20} className="text-blue-600" />
           </div>
         </header>
 
-        <section className="rounded-[30px] bg-white p-4 shadow-[0_18px_45px_rgba(76,29,149,0.12)]">
+        <section className="rounded-[32px] bg-white dark:bg-slate-900 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-50 dark:border-slate-800">
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={graphData} margin={{ top: 14, right: 4, left: -24, bottom: 0 }}>
                 <defs>
                   <linearGradient id="parentProgressGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.45} />
-                    <stop offset="100%" stopColor="#f7f1ff" stopOpacity={0.05} />
+                    <stop offset="0%" stopColor="#2563eb" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#2563eb" stopOpacity={0.01} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid vertical={false} stroke="#eee7ff" />
-                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7c6f94', fontWeight: 800 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7c6f94', fontWeight: 800 }} />
-                <Tooltip contentStyle={{ border: '0', borderRadius: 18, boxShadow: '0 18px 35px rgba(76,29,149,0.16)', fontSize: 11, fontWeight: 800 }} />
-                <Area type="monotone" dataKey="score" stroke="#7c3aed" strokeWidth={4} fill="url(#parentProgressGradient)" />
+                <CartesianGrid vertical={false} stroke="#f1f5f9" strokeDasharray="3 3" />
+                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 700 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 700 }} />
+                <Tooltip
+                  contentStyle={{
+                    border: '0',
+                    borderRadius: 16,
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                    fontSize: 11,
+                    fontWeight: 800,
+                    backgroundColor: '#1e293b',
+                    color: '#fff'
+                  }}
+                  itemStyle={{ color: '#fff' }}
+                />
+                <Area type="monotone" dataKey="score" stroke="#2563eb" strokeWidth={4} fill="url(#parentProgressGradient)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </section>
 
-        <section className="rounded-[30px] bg-white p-4 shadow-[0_18px_45px_rgba(76,29,149,0.12)]">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black">This week</h2>
-            <span className="text-[10px] font-black text-[#8b5cf6]">{weeklyRecords.length} records</span>
+        <section className="rounded-[32px] bg-white dark:bg-slate-900 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-50 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-sm font-black uppercase tracking-tight text-slate-900 dark:text-white">Weekly Breakdown</h2>
+            <button
+              onClick={() => setActiveTab('clinical-history')}
+              className="text-[10px] font-black text-blue-600 uppercase tracking-widest flex items-center gap-1"
+            >
+              See Reports <ChevronRight size={12} />
+            </button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {weeklyRows.map(row => (
-              <div key={row.day} className="grid grid-cols-[44px_1fr_48px] items-center gap-3 rounded-2xl bg-[#fbf8ff] px-3 py-2">
+              <div key={row.day} className="grid grid-cols-[50px_1fr_48px] items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-3 border border-slate-100 dark:border-slate-800">
                 <div>
-                  <p className="text-xs font-black">{row.day}</p>
-                  <p className="text-[9px] font-bold text-slate-400">{row.date}</p>
+                  <p className="text-xs font-black text-slate-900 dark:text-white">{row.day}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{row.date}</p>
                 </div>
-                <div className="h-2 rounded-full bg-[#eadcff] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#7c3aed]" style={{ width: `${Math.max(row.score, row.lessons || row.growth ? 12 : 0)}%` }} />
+                <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.4)]"
+                    style={{ width: `${Math.max(row.score, row.lessons || row.growth ? 12 : 0)}%` }}
+                  />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-black">{row.score}%</p>
-                  <p className="text-[8px] font-bold text-slate-400">{row.lessons + row.growth} rec</p>
+                  <p className="text-xs font-black text-slate-900 dark:text-white">{row.score}%</p>
+                  <p className="text-[8px] font-bold text-slate-400 uppercase">{row.lessons + row.growth} rec</p>
                 </div>
               </div>
             ))}
@@ -218,120 +237,163 @@ export const StudentDashboard: React.FC = () => {
     );
   }
 
+  const latestNotices5 = notices
+    .filter(n => n.target === 'ALL' || n.target === user?.role)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
   return (
-    <div className="h-[calc(100svh-116px)] overflow-hidden flex flex-col gap-3">
+    <div className="flex flex-col gap-6 pb-10">
       <header className="flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="h-12 w-12 rounded-full overflow-hidden bg-white p-1 shadow-lg shrink-0">
-            <img src={studentProfile.imageUrl || LogoImg} alt={studentProfile.fullName} className="h-full w-full rounded-full object-cover" />
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="h-14 w-14 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 p-1 shadow-2xl shadow-blue-500/10 border border-slate-100 dark:border-slate-800 shrink-0">
+            <img src={studentProfile.imageUrl || LogoImg} alt={studentProfile.fullName} className="h-full w-full rounded-xl object-cover" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-medium text-slate-500">Welcome Back!</p>
-            <h1 className="text-[15px] font-black leading-tight truncate">{studentProfile.fullName}</h1>
-            <p className="text-[10px] font-bold text-[#8b5cf6] truncate">{parentProfile?.name || user?.name || 'Parent portal'}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Dashboard Terminal</p>
+            <h1 className="text-lg font-black leading-tight truncate text-slate-900 dark:text-white uppercase tracking-tight">{studentProfile.fullName}</h1>
+            <p className="text-[10px] font-black text-blue-600 truncate uppercase tracking-widest">{parentProfile?.name || user?.name || 'Parent portal'}</p>
           </div>
         </div>
-        <button onClick={() => toggleNotices(true)} className="relative h-10 w-10 rounded-full bg-white shadow-lg grid place-items-center">
-          <Bell size={16} className="text-slate-500" />
-          {latestNotices.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />}
+        <button
+          onClick={() => setActiveTab('notices')}
+          className="relative h-12 w-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center justify-center transition-transform active:scale-90"
+        >
+          <Bell size={20} className="text-slate-500" />
+          {latestNotices5.length > 0 && <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900" />}
         </button>
       </header>
 
-      <section className={`relative shrink-0 h-[154px] rounded-[22px] bg-gradient-to-br ${feeTone} p-4 text-white overflow-hidden shadow-[0_18px_42px_rgba(124,58,237,0.28)]`}>
-        <div className="absolute -right-10 -bottom-14 h-36 w-36 rounded-full border border-white/35" />
-        <div className="absolute right-9 bottom-8 h-3 w-3 rounded-full border-2 border-white bg-white/20" />
-        <svg className="absolute inset-x-0 bottom-0 h-20 w-full opacity-80" viewBox="0 0 320 100" preserveAspectRatio="none">
-          <path d="M0,64 C44,18 82,82 122,58 C172,28 184,18 220,42 C254,66 256,86 284,44 C304,16 314,12 320,24" fill="none" stroke="white" strokeWidth="2" />
-        </svg>
+      <section className={`relative shrink-0 rounded-[32px] bg-slate-900 p-6 text-white overflow-hidden shadow-2xl shadow-blue-900/20 border border-slate-800`}>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-[80px] rounded-full"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-600/10 blur-[60px] rounded-full"></div>
+
         <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] font-black">Paid fees out of total</p>
-            <Receipt size={16} />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-blue-600/20 rounded-lg backdrop-blur-sm border border-blue-500/20">
+                <CreditCard size={16} className="text-blue-400" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Tuition Status</span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${paidRatio >= 1 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+              {paidRatio >= 1 ? 'Settled' : 'Outstanding'}
+            </span>
           </div>
-          <h2 className="mt-3 text-[26px] font-black tracking-tight">{compactMoney(paidFees)}</h2>
-          <p className="text-[11px] font-bold">out of {compactMoney(totalFees)}</p>
-          <div className="mt-3 flex items-center gap-2">
-            <span className="rounded-full bg-white/95 px-2 py-0.5 text-[9px] font-black text-[#7c3aed]">{Math.round(paidRatio * 100)}%</span>
-            <span className="text-[10px] font-bold">Last paid {lastPayment ? compactMoney(lastPayment.amount) : '$0'}</span>
+
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-black tracking-tighter">{compactMoney(paidFees)}</h2>
+            <span className="text-slate-500 font-bold text-sm">/ {compactMoney(totalFees)}</span>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-600 rounded-full shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-1000"
+                style={{ width: `${Math.min(paidRatio * 100, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {lastPayment ? `Last payment: ${compactMoney(lastPayment.amount)} on ${new Date(lastPayment.timestamp).toLocaleDateString()}` : 'No payments recorded'}
+              </p>
+              <span className="text-xs font-black text-blue-400">{Math.round(paidRatio * 100)}%</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 shrink-0">
-        <div className="rounded-[18px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)]">
-          <div className="h-7 w-7 rounded-full bg-[#f2e8ff] grid place-items-center mb-2"><BookOpenCheck size={13} className="text-[#7c3aed]" /></div>
-          <p className="text-[10px] font-medium text-slate-500">This week</p>
-          <div className="flex items-end justify-between">
-            <h3 className="text-2xl font-black">{weeklyRecords.length}</h3>
-            <span className="text-[9px] font-black text-emerald-500">Term {allRecords.length}</span>
+      <section className="grid grid-cols-2 gap-4 shrink-0">
+        <div className="rounded-[28px] bg-white dark:bg-slate-900 p-5 shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-slate-50 dark:border-slate-800 transition-transform active:scale-95">
+          <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-800">
+            <BookOpenCheck size={18} className="text-blue-600" />
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Records</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white">{weeklyRecords.length}</h3>
+            <span className="text-[9px] font-black text-emerald-500 uppercase">Term {allRecords.length}</span>
           </div>
         </div>
-        <div className="rounded-[18px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)]">
-          <div className="h-7 w-7 rounded-full bg-[#fff0f7] grid place-items-center mb-2"><Medal size={13} className="text-[#db2777]" /></div>
-          <p className="text-[10px] font-medium text-slate-500">Scores</p>
-          <div className="flex items-end justify-between">
-            <h3 className="text-2xl font-black">{latestScore}%</h3>
-            <span className="text-[9px] font-black text-[#7c3aed]">High {highestScore}%</span>
+        <div className="rounded-[28px] bg-white dark:bg-slate-900 p-5 shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-slate-50 dark:border-slate-800 transition-transform active:scale-95">
+          <div className="h-10 w-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center mb-4 border border-rose-100 dark:border-rose-800">
+            <Medal size={18} className="text-rose-600" />
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Avg Mastery</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white">{latestScore}%</h3>
+            <span className="text-[9px] font-black text-blue-600 uppercase">Max {highestScore}%</span>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[22px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)] min-h-0 flex-1">
-        <div className="mb-2 flex items-center justify-between">
+      <section className="rounded-[32px] bg-white dark:bg-slate-900 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-50 dark:border-slate-800">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText size={14} className="text-[#7c3aed]" />
-            <h2 className="text-xs font-black">Latest reports</h2>
+            <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">Latest Reports</h2>
           </div>
-          <button onClick={() => setActiveTab('clinical-history')} className="text-[9px] font-black text-[#7c3aed]">View all</button>
+          <button onClick={() => setActiveTab('clinical-history')} className="text-[10px] font-black text-blue-600 uppercase tracking-widest px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg">View All</button>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {studentLogs.length === 0 ? (
-            <div className="rounded-2xl bg-[#fbf8ff] px-3 py-4 text-[10px] font-bold text-slate-400">No reports yet.</div>
+            <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-8 text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest border border-dashed border-slate-200 dark:border-slate-800">No reports found</div>
           ) : studentLogs.slice(0, 3).map(log => (
             <button 
               key={log.id} 
               onClick={() => setActiveTab('clinical-history')} 
-              className="w-full rounded-2xl bg-[#fbf8ff] px-3 py-2.5 text-left flex items-center gap-3 hover:bg-[#f0e6ff] transition-colors"
+              className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-4 text-left flex items-center gap-4 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group"
             >
-              <div className="h-8 w-8 rounded-full bg-[#7c3aed] text-white grid place-items-center shrink-0">
-                <FileText size={13} />
+              <div className="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                <FileText size={16} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-black truncate">{log.targetBehavior}</p>
-                <p className="text-[9px] font-bold text-slate-400">{new Date(log.date).toLocaleDateString()}</p>
+                <p className="text-[11px] font-black truncate uppercase text-slate-900 dark:text-white">{log.targetBehavior}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(log.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[10px] font-black font-mono text-[#7c3aed] bg-[#f0e6ff] px-2 py-0.5 rounded-full">+{log.independenceScore}%</span>
-                <ChevronRight size={13} className="text-slate-300" />
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="text-[11px] font-black font-mono text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-lg">+{log.independenceScore}%</span>
+                <ChevronRight size={14} className="text-slate-300 group-hover:text-blue-600 transition-colors" />
               </div>
             </button>
           ))}
         </div>
       </section>
 
-      <section className="rounded-[22px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)] min-h-0 flex-1">
-        <div className="mb-2 flex items-center justify-between">
+      <section className="rounded-[32px] bg-white dark:bg-slate-900 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-50 dark:border-slate-800">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles size={14} className="text-[#7c3aed]" />
-            <h2 className="text-xs font-black">Latest notices</h2>
+            <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">Latest Notices</h2>
           </div>
-          <button onClick={() => toggleNotices(true)} className="text-[9px] font-black text-[#7c3aed]">View more</button>
+          <button onClick={() => setActiveTab('notices')} className="text-[10px] font-black text-blue-600 uppercase tracking-widest px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg">View More</button>
         </div>
-        <div className="space-y-2">
-          {latestNotices.length === 0 ? (
-            <div className="rounded-2xl bg-[#fbf8ff] px-3 py-4 text-[10px] font-bold text-slate-400">No notices yet.</div>
-          ) : latestNotices.map(notice => (
-            <button key={notice.id} onClick={() => toggleNotices(true)} className="w-full rounded-2xl bg-[#fbf8ff] px-3 py-2 text-left flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-[#7c3aed] text-white grid place-items-center shrink-0">
-                {notice.type === 'Fees' ? <CreditCard size={13} /> : notice.type === 'Meeting' ? <Flame size={13} /> : <FileText size={13} />}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-black truncate">{notice.title}</p>
-                <p className="text-[9px] font-bold text-slate-400 truncate">{notice.content}</p>
-              </div>
-              <ChevronRight size={13} className="text-slate-300" />
-            </button>
-          ))}
+        <div className="space-y-3">
+          {latestNotices5.length === 0 ? (
+            <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-8 text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest border border-dashed border-slate-200 dark:border-slate-800">No active notices</div>
+          ) : latestNotices5.map(notice => {
+            const isNew = (new Date().getTime() - new Date(notice.date).getTime()) < (3 * 24 * 60 * 60 * 1000);
+            return (
+              <button
+                key={notice.id}
+                onClick={() => setActiveTab('notices')}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-4 text-left flex items-center gap-4 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group"
+              >
+                <div className="h-10 w-10 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center shrink-0 border border-slate-700">
+                  {notice.type === 'Fees' ? <CreditCard size={16} /> : notice.type === 'Meeting' ? <Flame size={16} /> : <Bell size={16} />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-[11px] font-black truncate uppercase text-slate-900 dark:text-white">{notice.title}</p>
+                    {isNew && (
+                      <span className="px-1.5 py-0.5 bg-blue-600 text-white text-[7px] font-black rounded uppercase animate-pulse">New</span>
+                    )}
+                  </div>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter truncate">{new Date(notice.date).toLocaleDateString(undefined, { dateStyle: 'medium' })} • {notice.content}</p>
+                </div>
+                <ChevronRight size={14} className="text-slate-300 group-hover:text-blue-600 transition-colors" />
+              </button>
+            );
+          })}
         </div>
       </section>
     </div>
