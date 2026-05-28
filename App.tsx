@@ -76,7 +76,7 @@ const ParentMobileShell: React.FC<{ children: React.ReactNode }> = ({ children }
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f1ff] text-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-950">
       <main className="min-h-screen max-w-md mx-auto px-5 pt-5 pb-24 overflow-x-hidden">
         <div key={activeTab} className="animate-parent-tab">
           {children}

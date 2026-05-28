@@ -14,20 +14,24 @@ import {
   FileText,
   Download,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  TrendingUp,
+  Target
 } from 'lucide-react';
-import { Student, SessionLog } from '../types';
+import { Student, SessionLog, MilestoneRecord } from '../types';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 type TimeFilter = 'Week' | 'Month' | 'Year' | 'All';
+type ReportType = 'clinical' | 'growth';
 
 export const AdminClinicalLogs: React.FC = () => {
-  const { students, clinicalLogs, user, parents } = useStore();
+  const { students, clinicalLogs, user, parents, milestoneRecords } = useStore();
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>('All');
+  const [reportType, setReportType] = useState<ReportType>('clinical');
   const [activeLog, setActiveLog] = useState<SessionLog | null>(null);
+  const [activeMilestone, setActiveMilestone] = useState<MilestoneRecord | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const isRestrictedRole = user?.role === 'STUDENT' || user?.role === 'PARENT';
@@ -52,6 +56,12 @@ export const AdminClinicalLogs: React.FC = () => {
     let logs = clinicalLogs.filter(log => log.studentId === selectedStudent.id);
     return logs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [selectedStudent, clinicalLogs]);
+
+  const studentMilestones = useMemo(() => {
+    if (!selectedStudent) return [];
+    let milestones = milestoneRecords.filter(m => m.studentId === selectedStudent.id);
+    return milestones.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }, [selectedStudent, milestoneRecords]);
 
   const handleExportPDF = async () => {
     if (!selectedStudent || !activeLog) return;
