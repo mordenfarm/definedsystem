@@ -279,6 +279,39 @@ export const StudentDashboard: React.FC = () => {
       <section className="rounded-[22px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)] min-h-0 flex-1">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <FileText size={14} className="text-[#7c3aed]" />
+            <h2 className="text-xs font-black">Latest reports</h2>
+          </div>
+          <button onClick={() => setActiveTab('clinical-history')} className="text-[9px] font-black text-[#7c3aed]">View all</button>
+        </div>
+        <div className="space-y-2">
+          {studentLogs.length === 0 ? (
+            <div className="rounded-2xl bg-[#fbf8ff] px-3 py-4 text-[10px] font-bold text-slate-400">No reports yet.</div>
+          ) : studentLogs.slice(0, 3).map(log => (
+            <button 
+              key={log.id} 
+              onClick={() => setActiveTab('clinical-history')} 
+              className="w-full rounded-2xl bg-[#fbf8ff] px-3 py-2.5 text-left flex items-center gap-3 hover:bg-[#f0e6ff] transition-colors"
+            >
+              <div className="h-8 w-8 rounded-full bg-[#7c3aed] text-white grid place-items-center shrink-0">
+                <FileText size={13} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-black truncate">{log.targetBehavior}</p>
+                <p className="text-[9px] font-bold text-slate-400">{new Date(log.date).toLocaleDateString()}</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[10px] font-black font-mono text-[#7c3aed] bg-[#f0e6ff] px-2 py-0.5 rounded-full">+{log.independenceScore}%</span>
+                <ChevronRight size={13} className="text-slate-300" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-[22px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)] min-h-0 flex-1">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-[#7c3aed]" />
             <h2 className="text-xs font-black">Latest notices</h2>
           </div>
