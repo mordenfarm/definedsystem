@@ -333,7 +333,9 @@ export const StudentDirectory: React.FC = () => {
                   <div className="flex-1 overflow-y-auto p-10 sidebar-scrollbar">
                      {activeDetailTab === 'Lesson Notes' && (
                        <div className="space-y-6">
-                          {studentPerformance.analysis.filter(l => l.date.split('T')[0] === detailRecordDay).map(log => (
+                          {studentPerformance.analysis.filter(l => l.date.split('T')[0] === detailRecordDay).length === 0 ? (
+                            <p className="py-16 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">No lesson notes recorded for this day.</p>
+                          ) : studentPerformance.analysis.filter(l => l.date.split('T')[0] === detailRecordDay).map(log => (
                             <div key={log.id} className="bg-slate-50 dark:bg-slate-900 border border-slate-900 p-8 rounded-none shadow-sm space-y-6">
                                <div className="flex items-center justify-between">
                                   <h4 className="text-base font-black uppercase dark:text-white">{log.targetBehavior}</h4>
@@ -351,6 +353,56 @@ export const StudentDirectory: React.FC = () => {
                                     </div>
                                   ))}
                                </div>
+                            </div>
+                          ))}
+                       </div>
+                     )}
+                     {activeDetailTab === 'Growth Checks' && (
+                       <div className="space-y-6">
+                          {studentPerformance.milestones.filter(m => m.timestamp.split('T')[0] === detailRecordDay).length === 0 ? (
+                            <p className="py-16 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">No growth checks recorded for this day.</p>
+                          ) : studentPerformance.milestones.filter(m => m.timestamp.split('T')[0] === detailRecordDay).map(record => (
+                            <div key={record.id} className="bg-slate-50 dark:bg-slate-900 border border-slate-900 p-8 rounded-none shadow-sm space-y-6">
+                               <div className="flex items-center justify-between gap-4">
+                                  <div>
+                                    <h4 className="text-base font-black uppercase dark:text-white">{record.ageCategory}</h4>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                  </div>
+                                  <div className="px-4 py-1.5 bg-emerald-600 text-white text-[10px] font-black font-mono">{record.overallPercentage}%</div>
+                               </div>
+                               <div className="space-y-5">
+                                  {record.sections.map(section => {
+                                    const achieved = section.items.filter(item => item.checked).length;
+                                    return (
+                                      <div key={section.title} className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                                        <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+                                          <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">{section.title}</h5>
+                                          <span className="text-[9px] font-black uppercase text-emerald-600">{achieved}/{section.items.length} observed</span>
+                                        </div>
+                                        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                          {section.items.map(item => (
+                                            <div key={item.id} className="flex items-start justify-between gap-4 px-5 py-3">
+                                              <p className="text-xs font-bold text-slate-900 dark:text-white leading-relaxed">{item.text}</p>
+                                              <span className={`shrink-0 px-2 py-1 text-[8px] font-black uppercase border ${item.checked ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
+                                                {item.checked ? 'Observed' : 'Pending'}
+                                              </span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                               </div>
+                               {record.redFlags.some(flag => flag.checked) && (
+                                 <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 p-5">
+                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-rose-700 dark:text-rose-300 mb-3">Teacher flagged concerns</h5>
+                                    <div className="space-y-2">
+                                      {record.redFlags.filter(flag => flag.checked).map(flag => (
+                                        <p key={flag.id} className="text-xs font-bold text-rose-700 dark:text-rose-200">{flag.text}</p>
+                                      ))}
+                                    </div>
+                                 </div>
+                               )}
                             </div>
                           ))}
                        </div>

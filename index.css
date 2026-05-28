@@ -73,3 +73,22 @@ body {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
+
+@keyframes parentTabIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.animate-parent-tab {
+  animation: parentTabIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes receiptTick {
+  0% { transform: scale(0.6); opacity: 0; }
+  55% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-receipt-tick {
+  animation: receiptTick 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}

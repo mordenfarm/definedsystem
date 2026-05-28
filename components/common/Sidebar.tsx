@@ -44,6 +44,7 @@ export const Sidebar: React.FC = () => {
     if (role === 'PARENT' || role === 'STUDENT') {
       const items = [
         ...base,
+        { id: 'students', label: 'Student Records', icon: <Users size={18} /> },
         { id: 'fees', label: 'School Fees', icon: <Receipt size={18} /> },
       ];
       if (role === 'PARENT') {

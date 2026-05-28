@@ -25,7 +25,7 @@ import { CareersPage } from './components/landing/CareersPage';
 import { NoticesSlideOver } from './components/common/NoticesSlideOver';
 import { AdminNotices } from './components/AdminNotices';
 import { SystemLogs } from './components/SystemLogs';
-import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
+import { AlertCircle, BarChart3, Bell, CheckCircle2, Home, Info, LogOut, Receipt, X } from 'lucide-react';
 
 const NotificationHost = () => {
   const { notifications, removeNotification } = useStore();
@@ -53,6 +53,60 @@ const NotificationHost = () => {
           </button>
         </div>
       ))}
+    </div>
+  );
+};
+
+const ParentMobileShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { activeTab, setActiveTab, toggleNotices, logout } = useStore();
+
+  const navItems = [
+    { id: 'progress', label: 'Graph', icon: BarChart3 },
+    { id: 'fees', label: 'Fees', icon: Receipt },
+    { id: 'dashboard', label: 'Home', icon: Home },
+    { id: 'notices', label: 'Alerts', icon: Bell },
+  ];
+
+  const handleNav = (id: string) => {
+    if (id === 'notices') {
+      toggleNotices(true);
+      return;
+    }
+    setActiveTab(id);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f7f1ff] text-slate-950">
+      <main className="min-h-screen max-w-md mx-auto px-5 pt-5 pb-24 overflow-x-hidden">
+        <div key={activeTab} className="animate-parent-tab">
+          {children}
+        </div>
+      </main>
+      <nav className="fixed left-5 right-5 bottom-5 z-[80] max-w-sm mx-auto h-[50px] rounded-[25px] border border-white/60 bg-white/55 backdrop-blur-2xl shadow-[0_18px_55px_rgba(98,39,157,0.24)] px-2 flex items-center justify-between">
+        {navItems.map(item => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id || (item.id === 'dashboard' && activeTab === 'students');
+          return (
+            <button
+              key={item.id}
+              onClick={() => handleNav(item.id)}
+              className={`h-10 min-w-0 flex-1 rounded-[20px] flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${
+                isActive ? 'bg-[#7c3aed] text-white shadow-[0_10px_24px_rgba(124,58,237,0.35)] scale-[1.03]' : 'text-slate-500 hover:text-[#7c3aed]'
+              }`}
+            >
+              <Icon size={15} strokeWidth={2.6} />
+              <span className="text-[8px] font-black leading-none">{item.label}</span>
+            </button>
+          );
+        })}
+        <button
+          onClick={logout}
+          className="h-10 w-10 rounded-[20px] flex items-center justify-center text-slate-500 hover:text-rose-600 transition-colors"
+          title="Logout"
+        >
+          <LogOut size={15} strokeWidth={2.6} />
+        </button>
+      </nav>
     </div>
   );
 };
@@ -94,6 +148,7 @@ const App: React.FC = () => {
 
     if (role === 'STUDENT' || role === 'PARENT') {
       if (activeTab === 'dashboard' || activeTab === 'progress') return <StudentDashboard />;
+      if (activeTab === 'students' || activeTab === 'my-students') return <StudentDirectory />;
       if (activeTab === 'clinical-history') return <AdminClinicalLogs />;
       if (activeTab === 'order-history') return <OrderHistory />;
       if (activeTab === 'shop') return <UniformShop />;
@@ -151,7 +206,11 @@ const App: React.FC = () => {
     <>
       <NotificationHost />
       <NoticesSlideOver />
-      {isLoggedIn && view !== 'verify' && view !== 'apply' && view !== 'careers' ? (
+      {isLoggedIn && (user?.role === 'PARENT' || user?.role === 'STUDENT') && view !== 'verify' && view !== 'apply' && view !== 'careers' ? (
+        <ParentMobileShell>
+          {renderContent()}
+        </ParentMobileShell>
+      ) : isLoggedIn && view !== 'verify' && view !== 'apply' && view !== 'careers' ? (
         <AppShell>
           {renderContent()}
         </AppShell>

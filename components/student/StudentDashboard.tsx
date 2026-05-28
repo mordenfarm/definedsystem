@@ -1,16 +1,55 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { 
-  DollarSign, Activity, Brain, ChevronRight, Target, 
-  CreditCard, Bell, BadgeCheck, X, Send, FileSpreadsheet, MessageSquarePlus
+import {
+  Bell,
+  BookOpenCheck,
+  ChevronRight,
+  CreditCard,
+  FileText,
+  Flame,
+  Medal,
+  Receipt,
+  Sparkles,
+  TrendingUp,
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+
+const LogoImg = 'https://i.ibb.co/spSVqW8s/definedlogo.png';
+
+const startOfWeek = () => {
+  const today = new Date();
+  const day = today.getDay() || 7;
+  const monday = new Date(today);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(today.getDate() - day + 1);
+  return monday;
+};
+
+const compactMoney = (value: number) => `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
 export const StudentDashboard: React.FC = () => {
-  const { user, students, parents, settings, milestoneRecords, clinicalLogs, notices, replyToNotice, setActiveTab, theme, toggleNotices } = useStore();
-  const [selectedNotice, setSelectedNotice] = useState<any>(null);
-  
+  const {
+    user,
+    students,
+    parents,
+    settings,
+    milestoneRecords,
+    clinicalLogs,
+    payments,
+    notices,
+    setActiveTab,
+    toggleNotices,
+    activeTab,
+  } = useStore();
+
   const studentProfile = useMemo(() => {
     if (user?.role === 'STUDENT') return students.find(s => s.firebaseUid === user.id);
     if (user?.role === 'PARENT') {
@@ -20,119 +59,248 @@ export const StudentDashboard: React.FC = () => {
     return null;
   }, [user, students, parents]);
 
-  const studentMilestones = useMemo(() => studentProfile ? milestoneRecords.filter(r => r.studentId === studentProfile.id).sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : [], [milestoneRecords, studentProfile]);
-  const studentLogs = useMemo(() => studentProfile ? clinicalLogs.filter(l => l.studentId === studentProfile.id).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [], [clinicalLogs, studentProfile]);
+  const parentProfile = useMemo(() => {
+    if (user?.role !== 'PARENT') return null;
+    return parents.find(p => p.firebaseUid === user.id) || null;
+  }, [user, parents]);
 
-  const activityPulseData = useMemo(() => {
-    if (!studentProfile) return [];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    return months.map((m, idx) => ({ name: m, sessions: studentLogs.filter(l => new Date(l.date).getMonth() === idx).length }));
-  }, [studentLogs, studentProfile]);
+  const studentLogs = useMemo(
+    () => studentProfile ? clinicalLogs.filter(l => l.studentId === studentProfile.id) : [],
+    [clinicalLogs, studentProfile]
+  );
 
-  const weeklyGrid = useMemo(() => {
-    if (!studentProfile) return [];
-    const days = [];
-    const mon = new Date(); mon.setDate(mon.getDate() - mon.getDay() + 1);
-    for (let i = 0; i < 5; i++) {
-      const d = new Date(mon); d.setDate(mon.getDate() + i);
-      const ds = d.toISOString().split('T')[0];
-      days.push({
-        date: ds,
-        day: d.toLocaleDateString('en-US', { weekday: 'long' }),
-        analysis: studentLogs.filter(l => l.date.split('T')[0] === ds).length,
-        checks: studentMilestones.filter(m => m.timestamp.split('T')[0] === ds).length,
-        speech: studentLogs.filter(l => l.date.split('T')[0] === ds).reduce((a,c) => a + (c.programRequests?.length || 0), 0)
+  const studentMilestones = useMemo(
+    () => studentProfile ? milestoneRecords.filter(r => r.studentId === studentProfile.id) : [],
+    [milestoneRecords, studentProfile]
+  );
+
+  const studentPayments = useMemo(
+    () => studentProfile
+      ? payments.filter(p => p.studentId === studentProfile.id).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      : [],
+    [payments, studentProfile]
+  );
+
+  const allRecords = useMemo(() => {
+    const lessons = studentLogs.map(log => ({
+      date: log.date,
+      score: log.independenceScore || 0,
+      type: 'Lesson',
+    }));
+    const growth = studentMilestones.map(record => ({
+      date: record.timestamp,
+      score: record.overallPercentage || 0,
+      type: 'Growth',
+    }));
+    return [...lessons, ...growth].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [studentLogs, studentMilestones]);
+
+  const weekStart = useMemo(() => startOfWeek(), []);
+  const weeklyRecords = useMemo(
+    () => allRecords.filter(record => new Date(record.date) >= weekStart),
+    [allRecords, weekStart]
+  );
+
+  const latestScore = allRecords[0]?.score || 0;
+  const highestScore = allRecords.reduce((best, record) => Math.max(best, record.score), 0);
+  const totalFees = settings.feesAmount || 0;
+  const paidFees = studentProfile?.totalPaid || 0;
+  const paidRatio = totalFees > 0 ? paidFees / totalFees : 0;
+  const lastPayment = studentPayments[0];
+  const feeTone = paidRatio < 0.5 ? 'from-[#ff3d62] to-[#ff8f2f]' : 'from-[#7c3aed] to-[#ff8f2f]';
+
+  const latestNotices = useMemo(() => {
+    if (!user) return [];
+    return notices
+      .filter(n => n.target === 'ALL' || n.target === user.role)
+      .slice(0, 2);
+  }, [notices, user]);
+
+  const weeklyRows = useMemo(() => {
+    const monday = startOfWeek();
+    return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((label, idx) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + idx);
+      const key = date.toISOString().split('T')[0];
+      const lessons = studentLogs.filter(l => l.date.split('T')[0] === key);
+      const growth = studentMilestones.filter(m => m.timestamp.split('T')[0] === key);
+      const scores = [...lessons.map(l => l.independenceScore || 0), ...growth.map(m => m.overallPercentage || 0)];
+      return {
+        day: label,
+        date: key.slice(5),
+        lessons: lessons.length,
+        growth: growth.length,
+        score: scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0,
+      };
+    });
+  }, [studentLogs, studentMilestones]);
+
+  const graphData = useMemo(() => {
+    const lastSix = Array.from({ length: 6 }).map((_, idx) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (5 - idx) * 7);
+      const week = `${d.getMonth() + 1}/${d.getDate()}`;
+      const start = new Date(d);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+      const records = allRecords.filter(record => {
+        const rd = new Date(record.date);
+        return rd >= start && rd < end;
       });
-    }
-    return days;
-  }, [studentLogs, studentMilestones, studentProfile]);
+      const avg = records.length ? Math.round(records.reduce((sum, record) => sum + record.score, 0) / records.length) : 0;
+      return { week, score: avg, records: records.length };
+    });
+    return lastSix;
+  }, [allRecords]);
 
-  if (!studentProfile) return <div className="p-20 text-center font-black animate-pulse text-slate-900 uppercase">Registry Loading...</div>;
+  if (!studentProfile) {
+    return <div className="h-[70svh] grid place-items-center text-xs font-black uppercase tracking-widest text-[#7c3aed]">Loading portal</div>;
+  }
 
-  const axisColor = theme === 'dark' ? '#ffffff' : '#000000';
-  const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  if (activeTab === 'progress') {
+    return (
+      <div className="space-y-5">
+        <header className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-black text-[#8b5cf6]">Progress graph</p>
+            <h1 className="text-2xl font-black tracking-tight">Learning pulse</h1>
+          </div>
+          <div className="h-11 w-11 rounded-full bg-white shadow-lg grid place-items-center">
+            <TrendingUp size={18} className="text-[#7c3aed]" />
+          </div>
+        </header>
+
+        <section className="rounded-[30px] bg-white p-4 shadow-[0_18px_45px_rgba(76,29,149,0.12)]">
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={graphData} margin={{ top: 14, right: 4, left: -24, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="parentProgressGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.45} />
+                    <stop offset="100%" stopColor="#f7f1ff" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="#eee7ff" />
+                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7c6f94', fontWeight: 800 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7c6f94', fontWeight: 800 }} />
+                <Tooltip contentStyle={{ border: '0', borderRadius: 18, boxShadow: '0 18px 35px rgba(76,29,149,0.16)', fontSize: 11, fontWeight: 800 }} />
+                <Area type="monotone" dataKey="score" stroke="#7c3aed" strokeWidth={4} fill="url(#parentProgressGradient)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="rounded-[30px] bg-white p-4 shadow-[0_18px_45px_rgba(76,29,149,0.12)]">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-black">This week</h2>
+            <span className="text-[10px] font-black text-[#8b5cf6]">{weeklyRecords.length} records</span>
+          </div>
+          <div className="space-y-2">
+            {weeklyRows.map(row => (
+              <div key={row.day} className="grid grid-cols-[44px_1fr_48px] items-center gap-3 rounded-2xl bg-[#fbf8ff] px-3 py-2">
+                <div>
+                  <p className="text-xs font-black">{row.day}</p>
+                  <p className="text-[9px] font-bold text-slate-400">{row.date}</p>
+                </div>
+                <div className="h-2 rounded-full bg-[#eadcff] overflow-hidden">
+                  <div className="h-full rounded-full bg-[#7c3aed]" style={{ width: `${Math.max(row.score, row.lessons || row.growth ? 12 : 0)}%` }} />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-black">{row.score}%</p>
+                  <p className="text-[8px] font-bold text-slate-400">{row.lessons + row.growth} rec</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-10 max-w-[1600px] mx-auto font-sans">
-      <header className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 shadow-sm border-2 border-slate-900">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-blue-600 text-white flex items-center justify-center text-2xl font-black uppercase rounded-none overflow-hidden shadow-xl border-2 border-black">
-            {studentProfile.imageUrl ? <img src={studentProfile.imageUrl} className="w-full h-full object-cover" alt={studentProfile.fullName} /> : studentProfile.firstName[0]}
+    <div className="h-[calc(100svh-116px)] overflow-hidden flex flex-col gap-3">
+      <header className="flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="h-12 w-12 rounded-full overflow-hidden bg-white p-1 shadow-lg shrink-0">
+            <img src={studentProfile.imageUrl || LogoImg} alt={studentProfile.fullName} className="h-full w-full rounded-full object-cover" />
           </div>
-          <div>
-            <h1 className="text-xl font-black text-black dark:text-white uppercase leading-none">{studentProfile.fullName}</h1>
-            <p className="text-[10px] font-black text-black dark:text-white mt-1 uppercase tracking-widest">Parent Access Mode</p>
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium text-slate-500">Welcome Back!</p>
+            <h1 className="text-[15px] font-black leading-tight truncate">{studentProfile.fullName}</h1>
+            <p className="text-[10px] font-bold text-[#8b5cf6] truncate">{parentProfile?.name || user?.name || 'Parent portal'}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-           <div className="px-6 py-3 bg-slate-50 dark:bg-slate-800 text-[10px] font-black uppercase text-black dark:text-white border-2 border-slate-900">Arrears: ${Math.max(0, settings.feesAmount - (studentProfile.totalPaid || 0))}</div>
-           <button onClick={() => setActiveTab('fees')} className="px-6 py-3 bg-blue-600 text-white text-[10px] font-black uppercase hover:bg-slate-950 transition-all shadow-sm border-2 border-slate-900">Pay Fees</button>
-        </div>
+        <button onClick={() => toggleNotices(true)} className="relative h-10 w-10 rounded-full bg-white shadow-lg grid place-items-center">
+          <Bell size={16} className="text-slate-500" />
+          {latestNotices.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />}
+        </button>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-blue-50 dark:bg-blue-900/40 p-6 flex items-center gap-6 border-2 border-slate-900">
-          <div className="p-3 bg-blue-600 text-white"><CreditCard size={20} /></div>
-          <div><p className="text-[9px] font-black uppercase text-black dark:text-white">Total Tuition</p><h3 className="text-2xl font-black font-mono text-black dark:text-white">${settings.feesAmount}</h3></div>
-        </div>
-        <div className="bg-emerald-50 dark:bg-emerald-900/40 p-6 flex items-center gap-6 border-2 border-slate-900">
-          <div className="p-3 bg-emerald-600 text-white"><BadgeCheck size={20} /></div>
-          <div><p className="text-[9px] font-black uppercase text-black dark:text-white">Amount Paid</p><h3 className="text-2xl font-black font-mono text-black dark:text-white">${studentProfile.totalPaid || 0}</h3></div>
-        </div>
-        <div className="bg-purple-50 dark:bg-purple-900/40 p-6 flex items-center gap-6 border-2 border-slate-900">
-          <div className="p-3 bg-purple-600 text-white"><Target size={20} /></div>
-          <div><p className="text-[9px] font-black uppercase text-black dark:text-white">Growth Checks</p><h3 className="text-2xl font-black font-mono text-black dark:text-white">{studentMilestones.length}</h3></div>
-        </div>
-        <button onClick={() => toggleNotices(true)} className="bg-[#154A70] p-6 flex items-center gap-6 text-white text-left hover:bg-slate-950 transition-all border-2 border-slate-900">
-          <div className="p-3 bg-white/10 text-white"><Bell size={20} /></div>
-          <div className="min-w-0">
-            <p className="text-[9px] font-black uppercase text-white/70">Broadcaster</p>
-            <h3 className="text-sm font-black uppercase leading-tight truncate">{notices[0]?.title || 'No news'}</h3>
+      <section className={`relative shrink-0 h-[154px] rounded-[22px] bg-gradient-to-br ${feeTone} p-4 text-white overflow-hidden shadow-[0_18px_42px_rgba(124,58,237,0.28)]`}>
+        <div className="absolute -right-10 -bottom-14 h-36 w-36 rounded-full border border-white/35" />
+        <div className="absolute right-9 bottom-8 h-3 w-3 rounded-full border-2 border-white bg-white/20" />
+        <svg className="absolute inset-x-0 bottom-0 h-20 w-full opacity-80" viewBox="0 0 320 100" preserveAspectRatio="none">
+          <path d="M0,64 C44,18 82,82 122,58 C172,28 184,18 220,42 C254,66 256,86 284,44 C304,16 314,12 320,24" fill="none" stroke="white" strokeWidth="2" />
+        </svg>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-black">Paid fees out of total</p>
+            <Receipt size={16} />
           </div>
-        </button>
-      </div>
-
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-900 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-900 bg-slate-50/50 flex items-center justify-between">
-           <div className="flex items-center gap-2"><Activity size={14} className="text-blue-600" /><h3 className="text-[10px] font-black uppercase text-black dark:text-white">Monthly Progress Pulse</h3></div>
+          <h2 className="mt-3 text-[26px] font-black tracking-tight">{compactMoney(paidFees)}</h2>
+          <p className="text-[11px] font-bold">out of {compactMoney(totalFees)}</p>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="rounded-full bg-white/95 px-2 py-0.5 text-[9px] font-black text-[#7c3aed]">{Math.round(paidRatio * 100)}%</span>
+            <span className="text-[10px] font-bold">Last paid {lastPayment ? compactMoney(lastPayment.amount) : '$0'}</span>
+          </div>
         </div>
-        <div className="p-6 h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={activityPulseData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: axisColor }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: axisColor }} />
-              <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '0', border: '2px solid black', fontSize: '10px', fontWeight: 'bold' }} />
-              <Bar dataKey="sessions" fill="#154A70" barSize={40} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      </section>
 
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-900 overflow-hidden shadow-sm">
-         <div className="p-6 border-b border-slate-900 bg-slate-50/50">
-            <h3 className="text-sm font-black uppercase text-black dark:text-white">Weekly Progress Summary</h3>
-            <p className="text-[10px] font-black text-black dark:text-white mt-1 uppercase tracking-widest">Records for current school week</p>
-         </div>
-         <div className="overflow-x-auto">
-            <table className="w-full text-left table-auto">
-               <thead className="bg-slate-100 dark:bg-slate-950 text-[10px] font-black uppercase text-black dark:text-white border-b border-slate-900">
-                  <tr><th className="px-6 py-5">Day</th><th className="px-6 py-5 text-center">Milestones</th><th className="px-6 py-5 text-center">Lessons</th><th className="px-6 py-5 text-center">Communication</th><th className="px-6 py-5 text-right">View</th></tr>
-               </thead>
-               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {weeklyGrid.map(day => (
-                    <tr key={day.date} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                       <td className="px-6 py-5"><p className="text-[12px] font-black uppercase text-black dark:text-white leading-none">{day.day}</p><p className="text-[9px] font-mono font-bold text-slate-400 mt-1 uppercase">{day.date}</p></td>
-                       <td className="px-6 py-5 text-center"><span className={`px-3 py-1 text-[10px] font-black border-2 border-black ${day.checks > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-300'}`}>{day.checks} DONE</span></td>
-                       <td className="px-6 py-5 text-center"><span className={`px-3 py-1 text-[10px] font-black border-2 border-black ${day.analysis > 0 ? 'bg-blue-50 text-blue-700' : 'bg-slate-50 text-slate-300'}`}>{day.analysis} LOGS</span></td>
-                       <td className="px-6 py-5 text-center"><span className={`px-3 py-1 text-[10px] font-black border-2 border-black ${day.speech > 0 ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-300'}`}>{day.speech} TARGETS</span></td>
-                       <td className="px-6 py-5 text-right"><button onClick={() => setActiveTab('students')} className="p-3 bg-slate-100 dark:bg-slate-800 text-black dark:text-white hover:bg-blue-600 hover:text-white transition-all border border-black"><ChevronRight size={16}/></button></td>
-                    </tr>
-                  ))}
-               </tbody>
-            </table>
-         </div>
-      </div>
+      <section className="grid grid-cols-2 gap-3 shrink-0">
+        <div className="rounded-[18px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)]">
+          <div className="h-7 w-7 rounded-full bg-[#f2e8ff] grid place-items-center mb-2"><BookOpenCheck size={13} className="text-[#7c3aed]" /></div>
+          <p className="text-[10px] font-medium text-slate-500">This week</p>
+          <div className="flex items-end justify-between">
+            <h3 className="text-2xl font-black">{weeklyRecords.length}</h3>
+            <span className="text-[9px] font-black text-emerald-500">Term {allRecords.length}</span>
+          </div>
+        </div>
+        <div className="rounded-[18px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)]">
+          <div className="h-7 w-7 rounded-full bg-[#fff0f7] grid place-items-center mb-2"><Medal size={13} className="text-[#db2777]" /></div>
+          <p className="text-[10px] font-medium text-slate-500">Scores</p>
+          <div className="flex items-end justify-between">
+            <h3 className="text-2xl font-black">{latestScore}%</h3>
+            <span className="text-[9px] font-black text-[#7c3aed]">High {highestScore}%</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-[22px] bg-white p-3 shadow-[0_12px_30px_rgba(76,29,149,0.10)] min-h-0 flex-1">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles size={14} className="text-[#7c3aed]" />
+            <h2 className="text-xs font-black">Latest notices</h2>
+          </div>
+          <button onClick={() => toggleNotices(true)} className="text-[9px] font-black text-[#7c3aed]">View more</button>
+        </div>
+        <div className="space-y-2">
+          {latestNotices.length === 0 ? (
+            <div className="rounded-2xl bg-[#fbf8ff] px-3 py-4 text-[10px] font-bold text-slate-400">No notices yet.</div>
+          ) : latestNotices.map(notice => (
+            <button key={notice.id} onClick={() => toggleNotices(true)} className="w-full rounded-2xl bg-[#fbf8ff] px-3 py-2 text-left flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-[#7c3aed] text-white grid place-items-center shrink-0">
+                {notice.type === 'Fees' ? <CreditCard size={13} /> : notice.type === 'Meeting' ? <Flame size={13} /> : <FileText size={13} />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-black truncate">{notice.title}</p>
+                <p className="text-[9px] font-bold text-slate-400 truncate">{notice.content}</p>
+              </div>
+              <ChevronRight size={13} className="text-slate-300" />
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
