@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useStore } from '../../store/useStore';
 import { 
@@ -9,7 +8,7 @@ import {
 const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Sidebar: React.FC = () => {
-  const { user, activeTab, setActiveTab, isMobileMenuOpen, toggleMobileMenu, theme } = useStore();
+  const { user, activeTab, setActiveTab, isMobileMenuOpen, toggleMobileMenu } = useStore();
 
   const getNavItems = () => {
     const role = user?.role;
@@ -66,84 +65,102 @@ export const Sidebar: React.FC = () => {
   };
 
   const SidebarContent = (
-    <div className="flex flex-col h-full bg-[#154A70] dark:bg-slate-950 overflow-hidden">
-      <div className="md:hidden flex justify-end p-3">
-        <button onClick={() => toggleMobileMenu(false)} className="p-1.5 text-white/60 hover:text-rose-400 transition-colors">
+    <div className="relative flex flex-col h-full bg-[#18042e] text-white overflow-hidden border-r border-purple-950/60 shadow-2xl">
+      {/* Large Off-Center School Logo Watermark on Main Part */}
+      <div className="absolute -right-16 top-32 h-72 w-72 opacity-[0.05] pointer-events-none select-none">
+        <img
+          src={LogoImg}
+          alt=""
+          className="h-full w-full object-contain grayscale brightness-0 invert"
+        />
+      </div>
+
+      {/* Mobile Close Button */}
+      <div className="md:hidden flex justify-end p-3 relative z-10">
+        <button onClick={() => toggleMobileMenu(false)} className="p-1.5 text-purple-300 hover:text-rose-400 transition-colors">
           <X size={24} />
         </button>
       </div>
 
-      <div className="px-5 py-5 flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm">
-            <img src={LogoImg} alt="Logo" className="w-full h-auto" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">Defined Domain</span>
-            <span className="text-[7px] font-bold text-blue-200 dark:text-blue-400 uppercase tracking-[0.3em] mt-1">Day Services</span>
-          </div>
+      {/* Top Brand Logo */}
+      <div className="px-5 py-5 flex items-center gap-3 border-b border-purple-900/30 relative z-10">
+        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-md border border-purple-400/30 shrink-0">
+          <img src={LogoImg} alt="Logo" className="w-full h-full object-contain" />
         </div>
-
-        <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 flex items-center gap-3 shadow-sm">
-          <div className="w-9 h-9 rounded-full bg-white text-[#154A70] overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner border-2 border-white shrink-0 uppercase">
-            {user?.avatar ? (
-              <img src={user.avatar} className="w-full h-full object-cover" alt={user.name} />
-            ) : (
-              user?.name?.[0] || 'U'
-            )}
-          </div>
-          <div className="flex flex-col min-w-0">
-            <p className="text-[13px] font-bold text-white leading-none truncate uppercase">
-              {user?.name?.split(' ')[0]}
-            </p>
-            <span className="text-[8px] font-black uppercase text-blue-200 tracking-widest mt-1">
-              {user?.role.replace('_', ' ')}
-            </span>
-          </div>
+        <div className="flex flex-col min-w-0">
+          <span className="text-base font-black text-white leading-none uppercase tracking-wider truncate">Defined Domains</span>
+          <span className="text-[8px] font-black text-emerald-400 uppercase tracking-[0.25em] mt-1">Inclusive School</span>
         </div>
       </div>
 
-      <div className="px-5 mb-3">
-        <div className="h-px bg-white/10 w-full" />
-      </div>
-
-      <nav className="flex-1 flex flex-col px-3 space-y-1 overflow-y-auto sidebar-scrollbar pb-4">
+      {/* Navigation List */}
+      <nav className="flex-1 flex flex-col px-3 py-4 space-y-1.5 overflow-y-auto sidebar-scrollbar relative z-10">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`flex items-center gap-4 px-4 py-2 text-[13px] font-bold transition-all rounded-xl group relative ${
+              className={`flex items-center gap-3.5 px-3.5 py-2.5 text-[13px] font-bold transition-all rounded-xl group relative text-white ${
                 isActive 
-                  ? 'bg-white text-[#154A70] shadow-lg' 
-                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-950/60 border border-purple-400/30' 
+                  : 'text-white/90 hover:bg-white/10 hover:text-white'
               }`}
             >
-              <span className={`transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-[#154A70]' : 'text-white/60 group-hover:text-white'}`}>
-                {React.cloneElement(item.icon as React.ReactElement<any>, { size: 19 })}
+              <span className="text-white transition-transform duration-300 group-hover:scale-110 shrink-0">
+                {React.cloneElement(item.icon as React.ReactElement<any>, { size: 18, className: "text-white" })}
               </span>
-              <span className="tracking-tight">{item.label}</span>
+              <span className="tracking-tight text-white">{item.label}</span>
               {isActive && (
-                <div className="absolute right-3 w-1.5 h-1.5 bg-[#154A70] rounded-full shadow-[0_0_8px_rgba(21,74,112,0.5)]" />
+                <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
               )}
             </button>
           );
         })}
       </nav>
-      
-      <div className="p-4 text-center border-t border-white/10 opacity-40">
-         <p className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">BUILD 3.1.4</p>
+
+      {/* Bottom User Profile Section with School Logo Watermark */}
+      <div className="relative overflow-hidden px-4 py-3.5 border-t border-purple-900/40 bg-[#140226] flex items-center justify-between">
+        {/* Subtle School Logo Watermark */}
+        <div className="absolute -right-3 -bottom-3 h-24 w-24 opacity-[0.08] pointer-events-none select-none">
+          <img
+            src={LogoImg}
+            alt=""
+            className="h-full w-full object-contain grayscale brightness-0 invert"
+          />
+        </div>
+
+        <div className="relative z-10 flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 text-white overflow-hidden flex items-center justify-center font-black text-[10px] shadow-sm border border-purple-400/40 shrink-0 uppercase">
+            {user?.avatar ? (
+              <img src={user.avatar} className="w-full h-full object-cover" alt={user.name} />
+            ) : (
+              'SA'
+            )}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <p className="text-[11px] font-black text-white leading-tight truncate uppercase">
+              {user?.name || 'System Administrator'}
+            </p>
+            <p className="text-[8px] font-black uppercase tracking-widest text-emerald-400 mt-0.5">
+              {user?.role?.replace('_', ' ') || 'SUPER ADMIN'}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 
   return (
     <>
-      <aside className={`hidden md:flex w-64 border-r transition-colors duration-300 flex flex-col h-screen sticky top-0 ${theme === 'light' ? 'bg-[#154A70] border-slate-200' : 'bg-slate-950 border-white/5'}`}>{SidebarContent}</aside>
+      <aside className="hidden md:flex w-64 flex-col h-screen sticky top-0 bg-[#18042e] border-r border-purple-950/60 z-40">
+        {SidebarContent}
+      </aside>
       <div className={`fixed inset-0 z-[100] md:hidden transition-all duration-500 ${isMobileMenuOpen ? 'visible' : 'invisible'}`}>
-        <div className={`absolute inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-500 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => toggleMobileMenu(false)} />
-        <aside className={`absolute inset-y-0 left-0 w-72 shadow-2xl transition-transform duration-500 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} ${theme === 'light' ? 'bg-[#154A70]' : 'bg-slate-950'}`}>{SidebarContent}</aside>
+        <div className={`absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-500 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => toggleMobileMenu(false)} />
+        <aside className={`absolute inset-y-0 left-0 w-72 shadow-2xl transition-transform duration-500 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} bg-[#18042e]`}>
+          {SidebarContent}
+        </aside>
       </div>
     </>
   );

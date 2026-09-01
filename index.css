@@ -92,3 +92,26 @@ body {
 .animate-receipt-tick {
   animation: receiptTick 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+@keyframes growFromCenter {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+    filter: blur(14px);
+  }
+  68% {
+    opacity: 1;
+    transform: scale(1.025);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+.animate-grow-center {
+  transform-origin: center center;
+  animation: growFromCenter 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+}

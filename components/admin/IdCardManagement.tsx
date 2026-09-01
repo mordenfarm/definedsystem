@@ -305,8 +305,8 @@ export const IdCardManagement: React.FC = () => {
           </div>
 
           <div className="pointer-events-none fixed -left-[10000px] top-0" aria-hidden="true">
-            <IdentityCard ref={frontExportRef} student={selectedStudent} showingBack={false} qrDataUrl={qrDataUrl} />
-            <IdentityCard ref={backExportRef} student={selectedStudent} showingBack={true} qrDataUrl={qrDataUrl} />
+            <IdentityCard ref={frontExportRef} student={selectedStudent} showingBack={false} qrDataUrl={qrDataUrl} forceStatic />
+            <IdentityCard ref={backExportRef} student={selectedStudent} showingBack={true} qrDataUrl={qrDataUrl} forceStatic />
           </div>
 
           {isEditingId && (
