@@ -60,7 +60,16 @@ const NotificationHost = () => {
 };
 
 const ParentMobileShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { activeTab, setActiveTab, logout, user } = useStore();
+  const { activeTab, setActiveTab, logout, user, notices } = useStore();
+
+  const unreadNotices = React.useMemo(() => {
+    if (!user) return 0;
+    return notices.filter(notice =>
+      (notice.target === 'ALL' || notice.target === user.role) &&
+      (!notice.recipientUserId || notice.recipientUserId === user.id) &&
+      !(notice.views || []).some(view => view.userId === user.id)
+    ).length;
+  }, [notices, user]);
 
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Home },
@@ -100,7 +109,14 @@ const ParentMobileShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 isActive ? 'bg-[#7c3aed] text-white shadow-[0_10px_24px_rgba(124,58,237,0.32)] scale-[1.02]' : 'text-slate-500 hover:text-[#7c3aed]'
               }`}
             >
-              <Icon size={15} strokeWidth={2.6} />
+              <span className="relative">
+                <Icon size={15} strokeWidth={2.6} />
+                {item.id === 'notices' && unreadNotices > 0 && (
+                  <span className="absolute -right-3 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[7px] font-black text-white ring-2 ring-white">
+                    {unreadNotices > 9 ? '9+' : unreadNotices}
+                  </span>
+                )}
+              </span>
               <span className="text-[7.5px] font-black leading-none">{item.label}</span>
             </button>
           );

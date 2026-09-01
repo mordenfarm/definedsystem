@@ -22,7 +22,10 @@ export const ParentNotices: React.FC = () => {
   const parentNotices = useMemo(() => {
     if (!user) return [];
     return notices
-      .filter(notice => notice.target === 'ALL' || notice.target === user.role)
+      .filter(notice =>
+        (notice.target === 'ALL' || notice.target === user.role) &&
+        (!notice.recipientUserId || notice.recipientUserId === user.id)
+      )
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [notices, user]);
 

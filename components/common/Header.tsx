@@ -11,7 +11,8 @@ export const Header: React.FC = () => {
   const relevantNoticesCount = React.useMemo(() => {
     if (!user) return 0;
     return notices.filter(n => 
-      n.target === 'ALL' || n.target === user.role || (user.role === 'SUPER_ADMIN')
+      (n.target === 'ALL' || n.target === user.role || (user.role === 'SUPER_ADMIN')) &&
+      (!n.recipientUserId || n.recipientUserId === user.id || user.role === 'SUPER_ADMIN')
     ).length;
   }, [notices, user]);
 

@@ -712,6 +712,28 @@ export const useStore = create<AppState>((set, get) => {
       const u = get().user;
       try {
         await addDoc(collection(db, 'clinical_logs'), { ...logData, staffId: u?.id || 'unknown' });
+        const student = get().students.find(item => item.id === logData.studentId);
+        const parent = get().parents.find(item => item.studentId === logData.studentId);
+        if (student && parent) {
+          try {
+            await addDoc(collection(db, 'notices'), {
+              title: `New record for ${student.fullName}`,
+              content: `${u?.name || 'A teacher'} added a new learning record for ${student.fullName}. Open Reports to view the full details.`,
+              type: 'Record',
+              target: 'PARENT',
+              recipientUserId: parent.firebaseUid || parent.id,
+              studentId: student.id,
+              recordType: 'Lesson',
+              authorId: u?.id || 'system',
+              authorName: u?.name || 'School team',
+              timestamp: new Date().toISOString(),
+              replies: [],
+              views: []
+            });
+          } catch (noticeError) {
+            console.error('Parent record notification failed:', noticeError);
+          }
+        }
         get().notify('success', 'Progress saved.');
       } catch (err: any) { get().notify('error', err.message); }
     },
@@ -787,6 +809,29 @@ export const useStore = create<AppState>((set, get) => {
           staffId: get().user?.id || 'system',
           timestamp: new Date().toISOString()
         });
+        const u = get().user;
+        const student = get().students.find(item => item.id === record.studentId);
+        const parent = get().parents.find(item => item.studentId === record.studentId);
+        if (student && parent) {
+          try {
+            await addDoc(collection(db, 'notices'), {
+              title: `New assessment for ${student.fullName}`,
+              content: `${u?.name || 'A teacher'} completed a developmental assessment for ${student.fullName}. Open Reports to view the results.`,
+              type: 'Record',
+              target: 'PARENT',
+              recipientUserId: parent.firebaseUid || parent.id,
+              studentId: student.id,
+              recordType: 'Assessment',
+              authorId: u?.id || 'system',
+              authorName: u?.name || 'School team',
+              timestamp: new Date().toISOString(),
+              replies: [],
+              views: []
+            });
+          } catch (noticeError) {
+            console.error('Parent assessment notification failed:', noticeError);
+          }
+        }
         get().notify('success', 'Record saved.');
       } catch (err: any) { get().notify('error', err.message); }
     },

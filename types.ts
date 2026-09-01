@@ -68,7 +68,7 @@ export interface NoticeView {
 }
 
 export type NoticeTarget = 'PARENT' | 'SPECIALIST' | 'ADMIN_SUPPORT' | 'ALL';
-export type NoticeType = 'General' | 'Fees' | 'Meeting';
+export type NoticeType = 'General' | 'Fees' | 'Meeting' | 'Record';
 
 export interface Notice {
   id: string;
@@ -81,6 +81,9 @@ export interface Notice {
   timestamp: string;
   replies: NoticeReply[];
   views: NoticeView[];
+  recipientUserId?: string;
+  studentId?: string;
+  recordType?: 'Lesson' | 'Assessment';
 }
 
 export interface PaymentRecord {

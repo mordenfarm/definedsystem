@@ -33,6 +33,7 @@ export const StudentDirectory: React.FC = () => {
   const [activeProfileTab, setActiveProfileTab] = useState<'personal' | 'health' | 'records' | 'payments' | 'security'>('personal');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Student>>({});
   const [detailRecordDay, setDetailRecordDay] = useState<string | null>(null); 
   const [activeDetailTab, setActiveDetailTab] = useState<'Lesson Notes' | 'Growth Checks'>('Lesson Notes');
@@ -106,12 +107,17 @@ export const StudentDirectory: React.FC = () => {
   }, [payments, selectedStudent]);
 
   const handleSaveEdit = async () => {
-    if (!selectedStudent || !selectedStudent.firebaseUid) return;
+    if (!selectedStudent || !selectedStudent.firebaseUid || isSaving) return;
+    setIsSaving(true);
     try {
       await updateStudent(selectedStudent.firebaseUid, editForm);
       setSelectedStudent({ ...selectedStudent, ...editForm } as Student);
       setIsEditing(false);
-    } catch(e) {}
+    } catch(e) {
+      // The store displays the update error to the user.
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -533,11 +539,16 @@ export const StudentDirectory: React.FC = () => {
                 </button>
                 <button
                   onClick={() => isEditing ? handleSaveEdit() : setIsEditing(true)}
+                  disabled={isSaving}
                   className={`px-4 py-1.5 rounded-[9px] transition-all text-xs font-bold shadow-sm ${
                     isEditing ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
+                  } disabled:cursor-wait disabled:opacity-75`}
                 >
-                  {isEditing ? <><Save size={14} className="inline mr-1.5"/> Save Changes</> : <><Edit2 size={14} className="inline mr-1.5"/> Edit Profile</>}
+                  {isSaving
+                    ? <><Loader2 size={14} className="inline mr-1.5 animate-spin" /> Saving...</>
+                    : isEditing
+                      ? <><Save size={14} className="inline mr-1.5"/> Save Changes</>
+                      : <><Edit2 size={14} className="inline mr-1.5"/> Edit Profile</>}
                 </button>
               </>
             )}
@@ -551,7 +562,7 @@ export const StudentDirectory: React.FC = () => {
             { id: 'health', label: 'Health', count: '04' },
             { id: 'records', label: 'Progress', count: totalRecordsCount.toString().padStart(2, '0') },
             { id: 'payments', label: 'Billing', count: selectedStudentPayments.length.toString().padStart(2, '0') },
-            ...(isAdmin ? [{ id: 'security', label: 'Security', count: '01' }] : [])
+            ...(isAdmin ? [{ id: 'security', label: 'Security', count: '02' }] : [])
           ].map(tab => (
             <button
               key={tab.id}
@@ -615,6 +626,8 @@ export const StudentDirectory: React.FC = () => {
           {activeProfileTab === 'security' && isAdmin && (
             <SecurityRecord
               student={selectedStudent}
+              parentEmail={parents.find(parent => parent.studentId === selectedStudent.id)?.email}
+              parentPassword={parents.find(parent => parent.studentId === selectedStudent.id)?.password}
               isEditing={isEditing}
               editForm={editForm}
               setEditForm={setEditForm}

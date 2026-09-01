@@ -13,7 +13,8 @@ export const NoticesSlideOver: React.FC = () => {
   const filteredNotices = useMemo(() => {
     if (!user) return [];
     return notices.filter(n => 
-      n.target === 'ALL' || n.target === user.role || (user.role === 'SUPER_ADMIN')
+      (n.target === 'ALL' || n.target === user.role || (user.role === 'SUPER_ADMIN')) &&
+      (!n.recipientUserId || n.recipientUserId === user.id || user.role === 'SUPER_ADMIN')
     );
   }, [notices, user]);
 
