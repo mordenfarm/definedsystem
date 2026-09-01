@@ -24,6 +24,8 @@ import { OrderHistory } from './components/OrderHistory';
 import { ReceiptVerification } from './components/student/ReceiptVerification';
 import { OnlineApplication } from './components/landing/OnlineApplication';
 import { CareersPage } from './components/landing/CareersPage';
+import { StudentIdVerification } from './components/landing/StudentIdVerification';
+import { IdCardManagement } from './components/admin/IdCardManagement';
 import { NoticesSlideOver } from './components/common/NoticesSlideOver';
 import { AdminNotices } from './components/AdminNotices';
 import { SystemLogs } from './components/SystemLogs';
@@ -128,7 +130,7 @@ const ParentMobileShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
 const App: React.FC = () => {
   const { view, setView, activeTab, isLoggedIn, theme, user, initializeData } = useStore();
-  const isParentPortal = isLoggedIn && (user?.role === 'PARENT' || user?.role === 'STUDENT') && view !== 'verify' && view !== 'apply' && view !== 'careers';
+  const isParentPortal = isLoggedIn && (user?.role === 'PARENT' || user?.role === 'STUDENT') && view !== 'verify' && view !== 'id-verify' && view !== 'apply' && view !== 'careers';
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -137,6 +139,8 @@ const App: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.has('v')) {
       setView('verify');
+    } else if (params.has('id-card')) {
+      setView('id-verify');
     }
   }, [theme]);
 
@@ -146,6 +150,7 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (view === 'verify') return <ReceiptVerification />;
+    if (view === 'id-verify') return <StudentIdVerification />;
     if (view === 'apply') return <OnlineApplication />;
     if (view === 'careers') return <CareersPage />;
 
@@ -206,6 +211,7 @@ const App: React.FC = () => {
       case 'settings': return <SystemSettings />;
       case 'notices': return <AdminNotices />;
       case 'system-logs': return <SystemLogs />;
+      case 'id-cards': return <IdCardManagement />;
       
       default:
         return (
@@ -228,7 +234,7 @@ const App: React.FC = () => {
         <ParentMobileShell>
           {renderContent()}
         </ParentMobileShell>
-      ) : isLoggedIn && view !== 'verify' && view !== 'apply' && view !== 'careers' ? (
+      ) : isLoggedIn && view !== 'verify' && view !== 'id-verify' && view !== 'apply' && view !== 'careers' ? (
         <AppShell>
           {renderContent()}
         </AppShell>

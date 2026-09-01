@@ -3,7 +3,7 @@ import React from 'react';
 import { useStore } from '../../store/useStore';
 import { 
   LayoutDashboard, Users, HeartPulse, ShoppingCart, 
-  Briefcase, X, Settings, History, Send, Receipt, BellRing, ShieldAlert, Brain, ClipboardList, Coffee
+  Briefcase, X, Settings, History, Send, Receipt, BellRing, ShieldAlert, Brain, ClipboardList, Coffee, BadgeCheck
 } from 'lucide-react';
 
 const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
@@ -20,6 +20,7 @@ export const Sidebar: React.FC = () => {
         ...base,
         { id: 'student-applications', label: 'Student Applicants', icon: <ClipboardList size={18} /> },
         { id: 'students', label: 'Students', icon: <Users size={18} /> },
+        { id: 'id-cards', label: 'Student ID Cards', icon: <BadgeCheck size={18} /> },
         { id: 'staff', label: 'Staff members', icon: <Briefcase size={18} /> },
         { id: 'notices', label: 'Announcements', icon: <BellRing size={18} /> },
         { id: 'applications', label: 'Careers', icon: <Send size={18} /> },

@@ -36,6 +36,7 @@ export const Header: React.FC = () => {
       orders: { title: 'Order Transactions' },
       'system-logs': { title: 'System Logs' },
       students: { title: 'Students' },
+      'id-cards': { title: 'Student ID Cards' },
       'my-students': { title: 'My Students' },
       clinical: { title: 'Growth Checklist' },
       'clinical-logs': { title: 'Task Analysis' },

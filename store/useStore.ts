@@ -90,7 +90,7 @@ const extractSrcFromHtml = (input: string) => {
   return match ? match[1] : input.trim();
 };
 
-type View = 'landing' | 'login' | 'app' | 'careers' | 'shop' | 'verify' | 'apply' | 'tour';
+type View = 'landing' | 'login' | 'app' | 'careers' | 'shop' | 'verify' | 'id-verify' | 'apply' | 'tour';
 
 export interface AppNotification {
   id: string;

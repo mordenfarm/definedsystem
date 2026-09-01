@@ -37,6 +37,10 @@ export interface Student {
   totalPaid?: number;
   email?: string;
   password?: string;
+  idCardIssuedAt?: string;
+  idCardExpiresAt?: string;
+  idCardImageUrl?: string;
+  idCardAcademicYear?: string;
 }
 
 export interface StudentApplication {
