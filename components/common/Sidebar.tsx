@@ -9,7 +9,7 @@ import {
 const LogoImg = "https://i.ibb.co/spSVqW8s/definedlogo.png";
 
 export const Sidebar: React.FC = () => {
-  const { user, activeTab, setActiveTab, isMobileMenuOpen, toggleMobileMenu, theme, notify } = useStore();
+  const { user, activeTab, setActiveTab, isMobileMenuOpen, toggleMobileMenu, theme } = useStore();
 
   const getNavItems = () => {
     const role = user?.role;
@@ -30,7 +30,7 @@ export const Sidebar: React.FC = () => {
       ];
     }
 
-    if (role === 'SPECIALIST') {
+    if (role === 'SPECIALIST' || role === 'ADMIN_SUPPORT') {
       return [
         ...base,
         { id: 'my-students', label: 'My Students', icon: <Users size={18} /> },
@@ -60,10 +60,6 @@ export const Sidebar: React.FC = () => {
   const navItems = getNavItems();
 
   const handleNavClick = (id: string) => {
-    if (id === 'lounge') {
-      notify('info', 'Teach Lounge: Implementation in progress...', 3000);
-      return;
-    }
     setActiveTab(id);
     toggleMobileMenu(false);
   };

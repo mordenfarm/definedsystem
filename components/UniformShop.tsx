@@ -117,16 +117,16 @@ export const UniformShop: React.FC = () => {
   const filteredItems = (shopItems || []).filter(item => filter === 'All' ? true : item.category === filter);
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-500 pb-24 max-w-[1400px] mx-auto selection:bg-blue-100 relative font-sans">
+    <div className="relative w-full space-y-5 px-5 py-6 pb-24 font-sans animate-in fade-in duration-500 selection:bg-blue-100 sm:px-6 md:px-8">
       
       {/* Page Header */}
-      <header className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-none flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+      <header className="flex flex-col items-center justify-between gap-4 rounded-[9px] border border-slate-200 bg-white p-5 shadow-sm sm:flex-row dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-blue-600 text-white rounded-none">
+          <div className="rounded-[9px] bg-blue-600 p-3 text-white">
             <ShoppingBag size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-black uppercase text-slate-900 dark:text-white leading-none tracking-tighter">
+            <h1 className="text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-white">
               {showCartView ? 'Your Shopping Cart' : 'School Uniform Shop'}
             </h1>
             <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[0.3em] italic">Official Defined Domain uniforms and gear</p>
@@ -137,19 +137,19 @@ export const UniformShop: React.FC = () => {
           {isAdmin && !showCartView && (
             <button 
               onClick={openAddUniformForm}
-              className="px-6 py-3 bg-slate-900 text-white rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 border border-slate-800 shadow-lg"
+              className="flex items-center gap-2 rounded-[9px] bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-blue-700"
             >
               <PlusCircle size={14} /> Add New Uniform
             </button>
           )}
 
           {!showCartView && (
-            <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-none flex gap-1 border border-slate-200 dark:border-slate-700">
+            <div className="flex gap-1 rounded-[9px] border border-slate-200 bg-slate-100 p-1 dark:border-slate-700 dark:bg-slate-800">
               {['All', 'Required', 'Optional'].map(f => (
                 <button 
                   key={f} 
                   onClick={() => setFilter(f as any)} 
-                  className={`px-5 py-2 text-[9px] font-black uppercase tracking-widest rounded-none transition-all ${filter === f ? 'bg-white text-blue-600 shadow-sm border border-slate-200 dark:border-slate-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`rounded-[7px] px-4 py-2 text-[10px] font-bold transition-all ${filter === f ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   {f}
                 </button>

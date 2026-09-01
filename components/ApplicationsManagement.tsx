@@ -36,19 +36,8 @@ export const ApplicationsManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600">
-              <Briefcase size={16} />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Talent Acquisition</span>
-          </div>
-          <h1 className="text-4xl font-black tracking-tight uppercase dark:text-white leading-none">Job Applications</h1>
-          <p className="text-sm text-slate-500 font-medium mt-3">Review prospective candidate CVs and process recruitment.</p>
-        </div>
-
+    <div className="w-full space-y-7 px-5 py-6 animate-in fade-in duration-700 sm:px-6 md:px-8">
+      <header className="flex flex-col gap-6 md:flex-row md:items-end md:justify-end">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative group min-w-[300px]">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500" />
@@ -76,7 +65,7 @@ export const ApplicationsManagement: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredApps.length === 0 ? (
-            <div className="col-span-full py-20 text-center bg-slate-50 dark:bg-slate-900/50 rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+            <div className="col-span-full rounded-[9px] border border-dashed border-slate-200 bg-slate-50 py-20 text-center dark:border-slate-800 dark:bg-slate-900/50">
               <Briefcase size={48} className="mx-auto text-slate-300 mb-4" />
               <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No applications found in the current node.</p>
             </div>

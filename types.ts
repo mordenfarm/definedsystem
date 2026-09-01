@@ -7,6 +7,7 @@ export interface User {
   email: string;
   role: Role;
   avatar?: string;
+  password?: string;
 }
 
 export interface Student {
@@ -21,6 +22,7 @@ export interface Student {
   parentName: string;
   parentPhone: string;
   parentEmail: string;
+  parentPassword?: string;
   homeAddress: string;
   diagnosis: string;
   diagnosisPdf?: string; // Base64 or URL for the PDF file
@@ -33,6 +35,8 @@ export interface Student {
   imageUrl?: string;
   firebaseUid?: string;
   totalPaid?: number;
+  email?: string;
+  password?: string;
 }
 
 export interface StudentApplication {
@@ -121,6 +125,7 @@ export interface Parent {
   studentId: string;
   studentFullName: string;
   firebaseUid: string;
+  password?: string;
 }
 
 export interface Staff {
@@ -137,9 +142,11 @@ export interface Staff {
   position: string; 
   email: string;
   phone: string;
+  password?: string;
   role: Role;
   assignedClasses: string[];
   imageUrl?: string;
+  firebaseUid?: string;
 }
 
 export interface Application {

@@ -3,20 +3,20 @@ import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { 
   Users, Activity, HeartPulse, ShoppingCart, 
-  ChevronRight, ArrowUpRight, TrendingUp, Clock,
+  ChevronRight, ArrowUpRight, TrendingUp,
   FileText, ShieldAlert, Package, Search, Plus,
-  UserPlus, BellRing, Settings, Send, Receipt, History, Zap,
+  UserPlus, BellRing, Settings, Send, Receipt, History,
   Filter, DollarSign, Target, Database, ShieldCheck, CalendarDays
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const ActionCard = ({ label, icon: Icon, onClick, color }: any) => (
+const ActionCard = ({ label, icon: Icon, onClick, tone, iconTone }: any) => (
   <button 
     onClick={onClick}
-    className="flex flex-col items-center justify-center p-3 bg-white dark:bg-slate-900 border border-ghBorder dark:border-slate-800 rounded-xl shadow-sm hover:shadow-md hover:border-googleBlue transition-all group active:scale-95 w-full text-center"
+    className={`group flex w-full flex-col items-center justify-center rounded-xl border p-3 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 ${tone}`}
   >
-    <div className={`p-2 rounded-lg ${color} bg-opacity-10 mb-2 group-hover:scale-110 transition-transform`}>
-      <Icon size={18} className={color.replace('bg-', 'text-')} />
+    <div className={`mb-2 rounded-lg p-2 transition-transform group-hover:scale-110 ${iconTone}`}>
+      <Icon size={18} />
     </div>
     <span className="text-[10px] font-black uppercase tracking-tight text-slate-700 dark:text-slate-400 leading-tight">{label}</span>
   </button>
@@ -99,35 +99,17 @@ export const Dashboard: React.FC = () => {
   });
 
   return (
-    <div className="space-y-8 animate-fade-up max-w-[1600px] mx-auto pb-20">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">School Overview</span>
-          </div>
-          <h1 className="text-4xl font-black text-ghText dark:text-white uppercase tracking-tighter leading-none">Home Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-3 font-medium italic">Welcome back, {user?.name}. Everything is running smoothly today.</p>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-mono bg-ghBg dark:bg-slate-900 border border-ghBorder dark:border-slate-800 px-4 py-2 rounded-xl text-slate-500 shadow-sm">
-          <Clock size={14} className="text-googleBlue" /> {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-        </div>
-      </header>
-
+    <div className="w-full space-y-7 px-5 py-6 pb-20 animate-fade-up sm:px-6 md:px-8">
       <section className="space-y-4">
-        <div className="flex items-center gap-2 px-1">
-           <Zap size={14} className="text-amber-500 fill-amber-500" />
-           <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Quick Links</h2>
-        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          <ActionCard label="Add Student" icon={UserPlus} color="bg-blue-600" onClick={() => setActiveTab('students')} />
-          <ActionCard label="Add Staff" icon={Users} color="bg-emerald-600" onClick={() => setActiveTab('staff')} />
-          <ActionCard label="Checklist" icon={HeartPulse} color="bg-rose-600" onClick={() => setActiveTab('clinical')} />
-          <ActionCard label="Announce" icon={BellRing} color="bg-indigo-600" onClick={() => setActiveTab('notices')} />
-          <ActionCard label="Orders" icon={Receipt} color="bg-orange-600" onClick={() => setActiveTab('orders')} />
-          <ActionCard label="Uniforms" icon={ShoppingCart} color="bg-purple-600" onClick={() => setActiveTab('shop')} />
-          <ActionCard label="Logs" icon={ShieldAlert} color="bg-slate-700" onClick={() => setActiveTab('system-logs')} />
-          <ActionCard label="Settings" icon={Settings} color="bg-blue-500" onClick={() => setActiveTab('settings')} />
+          <ActionCard label="Add Student" icon={UserPlus} tone="border-blue-200 bg-blue-50/80 dark:border-blue-900 dark:bg-blue-950/25" iconTone="bg-blue-100 text-blue-600 dark:bg-blue-900/60 dark:text-blue-300" onClick={() => setActiveTab('students')} />
+          <ActionCard label="Add Staff" icon={Users} tone="border-emerald-200 bg-emerald-50/80 dark:border-emerald-900 dark:bg-emerald-950/25" iconTone="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/60 dark:text-emerald-300" onClick={() => setActiveTab('staff')} />
+          <ActionCard label="Checklist" icon={HeartPulse} tone="border-rose-200 bg-rose-50/80 dark:border-rose-900 dark:bg-rose-950/25" iconTone="bg-rose-100 text-rose-600 dark:bg-rose-900/60 dark:text-rose-300" onClick={() => setActiveTab('clinical')} />
+          <ActionCard label="Announce" icon={BellRing} tone="border-violet-200 bg-violet-50/80 dark:border-violet-900 dark:bg-violet-950/25" iconTone="bg-violet-100 text-violet-600 dark:bg-violet-900/60 dark:text-violet-300" onClick={() => setActiveTab('notices')} />
+          <ActionCard label="Orders" icon={Receipt} tone="border-orange-200 bg-orange-50/80 dark:border-orange-900 dark:bg-orange-950/25" iconTone="bg-orange-100 text-orange-600 dark:bg-orange-900/60 dark:text-orange-300" onClick={() => setActiveTab('orders')} />
+          <ActionCard label="Uniforms" icon={ShoppingCart} tone="border-fuchsia-200 bg-fuchsia-50/80 dark:border-fuchsia-900 dark:bg-fuchsia-950/25" iconTone="bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-900/60 dark:text-fuchsia-300" onClick={() => setActiveTab('shop')} />
+          <ActionCard label="Logs" icon={ShieldAlert} tone="border-slate-300 bg-slate-100 dark:border-slate-700 dark:bg-slate-800/70" iconTone="bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200" onClick={() => setActiveTab('system-logs')} />
+          <ActionCard label="Settings" icon={Settings} tone="border-indigo-200 bg-indigo-50/80 dark:border-indigo-900 dark:bg-indigo-950/25" iconTone="bg-indigo-100 text-indigo-600 dark:bg-indigo-900/60 dark:text-indigo-300" onClick={() => setActiveTab('settings')} />
         </div>
       </section>
 
@@ -139,7 +121,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-ghBorder dark:border-slate-800 flex flex-col shadow-sm rounded-[2.5rem] overflow-hidden">
+        <div className="flex flex-col overflow-hidden rounded-[9px] border border-ghBorder bg-white shadow-sm lg:col-span-2 dark:border-slate-800 dark:bg-slate-900">
           <div className="p-6 border-b border-ghBorder dark:border-slate-800 bg-ghBg/50 dark:bg-slate-950/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <TrendingUp size={18} className="text-googleBlue" />

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useStore, MilestoneTemplate } from '../../store/useStore';
-import { Plus, ClipboardCheck, ChevronRight, Trash2 } from 'lucide-react';
+import { Plus, ChevronRight, Trash2 } from 'lucide-react';
 
 interface Props {
   onEdit: (template: MilestoneTemplate) => void;
@@ -10,34 +10,72 @@ interface Props {
 
 export const ChecklistTemplates: React.FC<Props> = ({ onEdit, onAdd }) => {
   const { milestoneTemplates, deleteMilestoneTemplate } = useStore();
-  const borderStyle = "border-[#154A70] dark:border-[#9DB6BF]";
+  const stageColors = ['bg-blue-600', 'bg-fuchsia-600', 'bg-pink-600', 'bg-cyan-500', 'bg-orange-500', 'bg-emerald-500', 'bg-violet-600'];
+
+  const formatAgeRange = (minAge: number, maxAge: number, fallback: string) => {
+    if (maxAge <= 11) return `${minAge || 1} to ${maxAge} Months`;
+    if (minAge >= 12) {
+      const minYears = Math.floor(minAge / 12);
+      const maxYears = Math.ceil(maxAge / 12);
+      return minYears === maxYears ? `${minYears} Year${minYears === 1 ? '' : 's'}` : `${minYears} to ${maxYears} Years`;
+    }
+    return fallback;
+  };
 
   return (
-    <div className="p-6 md:p-10 space-y-10 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between">
+    <div className="animate-in fade-in duration-500">
+      <div className="flex flex-col justify-between gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center md:px-6 dark:border-slate-800">
         <div>
-          <h3 className="text-xl font-black uppercase text-slate-900 dark:text-white tracking-tight">Checklist Templates</h3>
-          <p className="text-[10px] font-bold text-black dark:text-white uppercase tracking-widest mt-1">Manage standard growth goals for students</p>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">Checklist Templates</h3>
+          <p className="mt-0.5 text-[10px] font-medium text-slate-400">Manage standard growth goals for students</p>
         </div>
-        <button onClick={onAdd} className="px-6 py-3 bg-[#154A70] text-white rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-slate-950 transition-all flex items-center gap-2 shadow-xl">
+        <button onClick={onAdd} className="flex items-center gap-2 rounded-[9px] bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-blue-700">
           <Plus size={16} /> New Template
         </button>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {milestoneTemplates.map(template => (
-          <div key={template.id} className={`group bg-slate-50 dark:bg-slate-950 border-2 ${borderStyle} p-6 rounded-none hover:border-blue-500 transition-all cursor-pointer relative`} onClick={() => onEdit(template)}>
-            <div className="flex items-start justify-between mb-6">
-              <div className="p-3 bg-white dark:bg-slate-900 rounded-none text-[#154A70] shadow-sm border border-slate-100 dark:border-slate-800"><ClipboardCheck size={24} /></div>
-              <button onClick={(e) => { e.stopPropagation(); if(confirm("Permanently delete this template?")) deleteMilestoneTemplate(template.id); }} className="text-slate-900 dark:text-rose-500 hover:text-rose-600 transition-colors p-2"><Trash2 size={20}/></button>
-            </div>
-            <h4 className="text-base font-black uppercase text-slate-900 dark:text-white mb-3 tracking-tight">{template.label}</h4>
-            <p className="text-[9px] font-black text-black dark:text-white uppercase tracking-widest flex items-center gap-3">
-              <span>{template.sections.length} Categories</span>
-              <ChevronRight size={10} />
-            </p>
-          </div>
-        ))}
+
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[780px] border-collapse text-left">
+          <thead>
+            <tr className="border-b border-slate-200 bg-slate-50/80 text-[10px] font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
+              <th className="px-5 py-3 font-semibold">Stage</th>
+              <th className="px-5 py-3 font-semibold">Developmental age</th>
+              <th className="px-5 py-3 font-semibold">Categories</th>
+              <th className="px-5 py-3 font-semibold">Check items</th>
+              <th className="px-5 py-3 font-semibold">Warning signs</th>
+              <th className="px-5 py-3 text-right font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 text-xs dark:divide-slate-800">
+            {milestoneTemplates.length === 0 ? (
+              <tr><td colSpan={6} className="px-5 py-16 text-center font-medium text-slate-400">No checklist templates have been created.</td></tr>
+            ) : milestoneTemplates.map((template, index) => {
+              const itemCount = template.sections.reduce((total, section) => total + section.items.length, 0);
+              return (
+                <tr key={template.id} onClick={() => onEdit(template)} className="group cursor-pointer transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-mono text-lg font-black text-white ${stageColors[index % stageColors.length]}`}>
+                        {(index + 1).toString().padStart(2, '0')}
+                      </div>
+                      <span className="font-bold text-slate-900 dark:text-white">Stage {(index + 1).toString().padStart(2, '0')}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 font-semibold text-slate-800 dark:text-slate-200">{formatAgeRange(template.minAge, template.maxAge, template.label)}</td>
+                  <td className="px-5 py-4 text-slate-500 dark:text-slate-400">{template.sections.length} categories</td>
+                  <td className="px-5 py-4 font-mono text-[11px] text-slate-500 dark:text-slate-400">{itemCount} items</td>
+                  <td className="px-5 py-4 text-slate-500 dark:text-slate-400">{template.redFlags?.length || 0} signs</td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={(event) => { event.stopPropagation(); if (confirm('Permanently delete this template?')) deleteMilestoneTemplate(template.id); }} className="rounded-[7px] p-2 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/30" title="Delete template"><Trash2 size={15} /></button>
+                      <button onClick={(event) => { event.stopPropagation(); onEdit(template); }} className="rounded-[7px] p-2 text-slate-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/30" title="Edit template"><ChevronRight size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

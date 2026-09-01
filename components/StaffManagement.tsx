@@ -91,17 +91,23 @@ const ProfileRow = ({
             </select>
           ) : (
             <input 
-              type="text"
-              className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-none text-sm font-bold outline-none focus:border-blue-600"
-              value={(editForm as any)[field] || ''}
+              type={field === 'password' ? 'text' : 'text'}
+              className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-none text-sm font-bold outline-none focus:border-blue-600 font-mono"
+              value={(editForm as any)[field] !== undefined ? (editForm as any)[field] : (field === 'password' ? value : '')}
               onChange={e => setEditForm({...editForm, [field]: e.target.value})}
-              placeholder={`Enter ${label.toLowerCase()}...`}
+              placeholder={field === 'password' ? 'Enter new password (min 6 characters)...' : `Enter ${label.toLowerCase()}...`}
             />
           )
         ) : (
-          <span className={`text-sm font-bold text-slate-700 dark:text-slate-200`}>
-            {Array.isArray(filteredValue) ? filteredValue.join(', ') : (filteredValue || 'None')}
-          </span>
+          field === 'password' ? (
+            <span className="font-mono bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 px-3 py-1 border border-amber-200 dark:border-amber-800 text-xs font-black uppercase tracking-wider">
+              {filteredValue || 'Not Set'}
+            </span>
+          ) : (
+            <span className={`text-sm font-bold text-slate-700 dark:text-slate-200`}>
+              {Array.isArray(filteredValue) ? filteredValue.join(', ') : (filteredValue || 'None')}
+            </span>
+          )
         )}
       </td>
     </tr>
@@ -189,28 +195,18 @@ export const StaffManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1400px] mx-auto">
-      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-none text-blue-600">
-              <User size={16} />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Team Members</span>
-          </div>
-          <h1 className="text-4xl font-black uppercase text-slate-900 dark:text-white leading-none tracking-tight">Staff List</h1>
-          <p className="text-sm text-slate-500 font-medium mt-3 italic">View and update everyone working at the school.</p>
-        </div>
-        {isAdmin && (
-          <button onClick={openAddStaffForm} className="px-8 py-3.5 bg-blue-600 text-white rounded-none text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-black transition-all active:scale-95 flex items-center gap-3">
+    <div className="w-full space-y-7 px-5 py-6 animate-in fade-in duration-500 sm:px-6 md:px-8">
+      {isAdmin && (
+        <div className="flex justify-end">
+          <button onClick={openAddStaffForm} className="flex items-center gap-2 rounded-[9px] bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-blue-700">
             <Plus size={18} /> Add New Staff
           </button>
-        )}
-      </header>
+        </div>
+      )}
 
-      <div className="flex items-center gap-1.5 border-b-2 border-slate-100 dark:border-slate-800 mb-2">
-        <button onClick={() => setActiveSubTab('administration')} className={`px-8 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition-all ${activeSubTab === 'administration' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>Office & Support</button>
-        <button onClick={() => setActiveSubTab('general')} className={`px-8 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition-all ${activeSubTab === 'general' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>Teachers</button>
+      <div className="mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800">
+        <button onClick={() => setActiveSubTab('administration')} className={`border-b-2 px-5 py-3 text-xs font-bold transition-all ${activeSubTab === 'administration' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>Office & Support</button>
+        <button onClick={() => setActiveSubTab('general')} className={`border-b-2 px-5 py-3 text-xs font-bold transition-all ${activeSubTab === 'general' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>Teachers</button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -221,7 +217,7 @@ export const StaffManagement: React.FC = () => {
             placeholder="Search by name..." 
             value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} 
-            className="w-full pl-14 pr-6 py-4 bg-white dark:bg-slate-900 rounded-none text-sm font-bold border-2 border-slate-100 dark:border-slate-800 outline-none focus:border-blue-500 transition-all shadow-sm" 
+            className="w-full rounded-[9px] border border-slate-200 bg-white py-3 pl-14 pr-6 text-sm font-medium outline-none transition-all focus:border-blue-500 dark:border-slate-800 dark:bg-slate-900" 
           />
         </div>
         <div className="bg-slate-100 dark:bg-slate-800/50 p-1.5 rounded-none flex gap-1 border border-slate-200 dark:border-slate-700 h-fit">
@@ -230,7 +226,7 @@ export const StaffManagement: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-none overflow-hidden shadow-sm">
+      <div className="overflow-hidden rounded-[9px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         {viewMode === 'table' ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -238,6 +234,7 @@ export const StaffManagement: React.FC = () => {
                 <tr>
                   <th className="px-10 py-6 tracking-widest">Photo & Name</th>
                   <th className="px-8 py-6 tracking-widest">Job Role</th>
+                  <th className="px-8 py-6 tracking-widest">Password</th>
                   <th className="px-8 py-6 tracking-widest">Classes</th>
                   <th className="px-10 py-6 text-right tracking-widest">Action</th>
                 </tr>
@@ -259,6 +256,9 @@ export const StaffManagement: React.FC = () => {
                       </td>
                       <td className="px-8 py-6">
                         <span className="px-4 py-1.5 rounded-none bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase border border-blue-100 dark:border-blue-800 shadow-sm">{s.position}</span>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className="px-4 py-1.5 rounded-none bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-tight border border-amber-100 dark:border-amber-800 shadow-sm font-mono">{s.password || '••••••••'}</span>
                       </td>
                       <td className="px-8 py-6 text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">{sClasses.join(', ') || 'Not Assigned'}</td>
                       <td className="px-10 py-6 text-right"><ChevronRight size={20} className="ml-auto text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" /></td>
@@ -353,6 +353,7 @@ export const StaffManagement: React.FC = () => {
                         <ProfileRow label="Assigned Classes" value={selectedStaff.assignedClasses} field="assignedClasses" isEditing={isEditing} editForm={editForm} setEditForm={setEditForm} multiple availableClasses={availableClasses} />
                         <ProfileRow label="Email Address" value={selectedStaff.email} field="email" isEditing={isEditing} editForm={editForm} setEditForm={setEditForm} />
                         <ProfileRow label="Phone Number" value={selectedStaff.phone} field="phone" isEditing={isEditing} editForm={editForm} setEditForm={setEditForm} />
+                        <ProfileRow label="Password" value={selectedStaff.password || 'Not Set'} field="password" isEditing={isEditing} editForm={editForm} setEditForm={setEditForm} />
                         <ProfileRow label="System ID" value={selectedStaff.id} field="id" isEditing={false} editForm={editForm} setEditForm={setEditForm} />
                      </tbody>
                   </table>
@@ -492,6 +493,11 @@ export const StaffManagement: React.FC = () => {
                       <label className={googleLabel}>Phone Number</label>
                       <input required type="tel" name="phone" placeholder="+263..." className={googleInput} />
                       <p className="text-[11px] text-slate-400">Include the country code.</p>
+                    </div>
+                    <div className="space-y-2">
+                    <label className={googleLabel}>Password</label>
+                    <input type="password" name="password" placeholder="Enter a password" className={googleInput} />
+                    <p className="text-[11px] text-slate-400">Used for staff member login.</p>
                     </div>
                   </div>
                 </section>

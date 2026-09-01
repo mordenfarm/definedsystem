@@ -12,35 +12,100 @@ interface Props {
   onUploadPdf: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const HealthRecord: React.FC<Props> = ({ student, isEditing, editForm, setEditForm, onViewPdf, onUploadPdf }) => (
-  <div className="space-y-8 max-w-4xl animate-in fade-in duration-500">
-    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-rose-600 border-b border-slate-100 pb-2">Medical Profile</h3>
-    <div className="grid grid-cols-1 gap-6">
-      <div className={`p-8 bg-slate-50 dark:bg-slate-900 border-2 border-[#3E6A8A] dark:border-[#9DB6BF] rounded-none shadow-inner`}>
-        <div className="flex items-center justify-between mb-4">
-          <label className="text-[10px] font-black uppercase text-slate-900 dark:text-white">Professional Diagnosis</label>
-          {student.diagnosisPdf && (
-            <button onClick={() => onViewPdf(student.diagnosisPdf!)} className="flex items-center gap-2 text-[10px] font-black uppercase text-blue-600 hover:text-blue-700">
-              <FileText size={14} /> View Report
-            </button>
-          )}
+export const HealthRecord: React.FC<Props> = ({
+  student,
+  isEditing,
+  editForm,
+  setEditForm,
+  onViewPdf,
+  onUploadPdf
+}) => {
+  const recordInput = "w-full rounded-md border border-slate-300 bg-white p-3 text-sm font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-950 dark:text-white";
+  const RecordBlock = ({ category, title, children }: { category: string; title: string; children: React.ReactNode }) => (
+    <section className="overflow-hidden border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-slate-50/80 px-5 py-3 dark:border-slate-800 dark:bg-slate-800/50">
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">{category}</p>
+          <h3 className="mt-0.5 text-sm font-bold text-slate-900 dark:text-white">{title}</h3>
         </div>
-        {isEditing ? (
-          <div className="space-y-4">
-            <textarea value={editForm.diagnosis || ''} onChange={e => setEditForm({...editForm, diagnosis: e.target.value})} className="w-full p-4 bg-white dark:bg-slate-950 border-2 border-[#3E6A8A] dark:border-[#9DB6BF] rounded-none font-bold text-sm text-black dark:text-white" />
-            <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase text-slate-900 dark:text-white">Update PDF Record</label>
-              <input type="file" accept="application/pdf" onChange={onUploadPdf} className="block w-full text-[10px] text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-none file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-            </div>
+      </header>
+      <div className="p-5">{children}</div>
+    </section>
+  );
+
+  return (
+  <div className="grid w-full grid-cols-1 items-start gap-5 animate-in fade-in duration-300 xl:grid-cols-2">
+        <RecordBlock category="Clinical record" title="Professional diagnosis">
+          <div className="flex items-center justify-end">
+            {student.diagnosisPdf && (
+              <button
+                onClick={() => onViewPdf(student.diagnosisPdf!)}
+                className="mb-3 flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700"
+              >
+                <FileText size={14} /> View Document
+              </button>
+            )}
           </div>
-        ) : <p className="text-lg font-black uppercase text-slate-900 dark:text-white">{student.diagnosis || 'No diagnosis recorded'}</p>}
-      </div>
-      <div className={`p-8 bg-slate-50 dark:bg-slate-900 border-2 border-[#3E6A8A] dark:border-[#9DB6BF] rounded-none shadow-inner`}>
-        <label className="text-[10px] font-black uppercase text-slate-900 dark:text-white mb-4 block">Teacher Observations</label>
-        {isEditing ? (
-          <textarea value={editForm.targetBehaviors || ''} onChange={e => setEditForm({...editForm, targetBehaviors: e.target.value})} className="w-full p-4 bg-white dark:bg-slate-950 border-2 border-[#3E6A8A] dark:border-[#9DB6BF] rounded-none font-bold text-sm text-black dark:text-white" />
-        ) : <p className="text-sm font-medium leading-relaxed italic text-slate-900 dark:text-white">"{student.targetBehaviors || 'No observations added.'}"</p>}
-      </div>
-    </div>
+
+          {isEditing ? (
+            <div className="space-y-3">
+              <textarea
+                value={editForm.diagnosis || ''}
+                onChange={e => setEditForm({ ...editForm, diagnosis: e.target.value })}
+                placeholder="Enter diagnosis notes..."
+                className={recordInput}
+                rows={4}
+              />
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-slate-400">
+                  Update Diagnostic PDF
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={onUploadPdf}
+                  className="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-[9px] file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                />
+              </div>
+            </div>
+          ) : (
+            <p className="min-h-20 text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">
+              {student.diagnosis || 'No formal diagnosis report attached.'}
+            </p>
+          )}
+        </RecordBlock>
+
+        <RecordBlock category="Support record" title="Behaviour plan and observations">
+          {isEditing ? (
+            <textarea
+              value={editForm.targetBehaviors || ''}
+              onChange={e => setEditForm({ ...editForm, targetBehaviors: e.target.value })}
+              placeholder="Enter observed behavior patterns and sensory requirements..."
+              className={recordInput}
+              rows={5}
+            />
+          ) : (
+            <p className="min-h-20 text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">
+              {student.targetBehaviors || 'No custom behavioural protocols specified.'}
+            </p>
+          )}
+        </RecordBlock>
+
+        <RecordBlock category="Medical record" title="Medical notes">
+          {isEditing ? (
+            <textarea value={editForm.medicalRecords || ''} onChange={e => setEditForm({ ...editForm, medicalRecords: e.target.value })} placeholder="Enter allergies, medication and medical notes..." className={recordInput} rows={5} />
+          ) : (
+            <p className="min-h-20 text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">{student.medicalRecords || 'No medical notes have been recorded.'}</p>
+          )}
+        </RecordBlock>
+
+        <RecordBlock category="Background record" title="Social and developmental history">
+          {isEditing ? (
+            <textarea value={editForm.socialHistory || ''} onChange={e => setEditForm({ ...editForm, socialHistory: e.target.value })} placeholder="Enter relevant social and developmental history..." className={recordInput} rows={5} />
+          ) : (
+            <p className="min-h-20 text-sm font-medium leading-6 text-slate-700 dark:text-slate-300">{student.socialHistory || 'No social or developmental history has been recorded.'}</p>
+          )}
+        </RecordBlock>
   </div>
-);
+  );
+};

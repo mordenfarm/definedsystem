@@ -10,6 +10,7 @@ import { StaffManagement } from './components/StaffManagement';
 import { StudentDirectory } from './components/StudentDirectory';
 import { ClinicalABA } from './components/ClinicalABA';
 import { LessonLogs } from './components/LessonLogs';
+import { TeachLounge } from './components/TeachLounge';
 import { AdminClinicalLogs } from './components/AdminClinicalLogs';
 import { UniformShop } from './components/UniformShop';
 import { SystemSettings } from './components/SystemSettings';
@@ -161,6 +162,7 @@ const App: React.FC = () => {
       if (activeTab === 'my-students' || activeTab === 'students') return <StudentDirectory />;
       if (activeTab === 'clinical') return <ClinicalABA />;
       if (activeTab === 'clinical-logs') return <LessonLogs />;
+      if (activeTab === 'lounge') return <TeachLounge />;
       if (activeTab === 'settings') return <SystemSettings />;
     }
 

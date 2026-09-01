@@ -93,17 +93,17 @@ const ECDC_FULL_DATA: MilestoneTemplate[] = [
     ]
   },
   {
-    id: 'm-8-12',
-    label: '8 to 12 Months',
+    id: 'm-8-11',
+    label: '8 to 11 Months',
     minAge: 8,
-    maxAge: 12,
+    maxAge: 11,
     sections: [
       { title: 'Movement', items: [
         'Gets to sitting position without assistance (8-10 mos.)', 
         'Crawls forward on belly', 
         'Assumes hand and knee position', 
         'Creeps on hands and knees', 
-        'Gets from sitting to crawling or prone position (10-12 mos.)', 
+        'Gets from sitting to crawling or prone position (10-11 mos.)', 
         'Pulls self up to standing position', 
         'Walks holding on to furniture', 
         'Stands momentarily without support'
@@ -111,37 +111,37 @@ const ECDC_FULL_DATA: MilestoneTemplate[] = [
       { title: 'Hand and Finger Skills', items: [
         'Uses pincer grasp (thumb and index) (7-10 mos.)', 
         'Bangs two one-inch cubes together', 
-        'Puts objects into container (10-12 mos.)', 
-        'Takes objects out of container (10-12 mos.)', 
+        'Puts objects into container (10-11 mos.)', 
+        'Takes objects out of container (10-11 mos.)', 
         'Pokes with index finger'
       ] },
       { title: 'Cognitive', items: [
         'Explores objects by shaking, banging, throwing (8-10 mos.)', 
-        'Finds hidden objects easily (10-12 mos.)', 
+        'Finds hidden objects easily (10-11 mos.)', 
         'Looks at correct picture when image is named', 
-        'Imitates gestures (9-12 mos.)'
+        'Imitates gestures (9-11 mos.)'
       ] },
       { title: 'Language', items: [
         'Responds to simple verbal requests', 
         'Responds to “no”', 
         'Makes simple gestures such as shaking head for no', 
         'Babbles with inflection (8-10 mos.)', 
-        'Says “dada” and “mama” for specific person (11-12 mos.)'
+        'Says “dada” and “mama” for specific person (11 mos.)'
       ] }
     ],
     redFlags: [
       'Does not crawl', 
       'Drags one side of body while crawling', 
       'Cannot stand when supported', 
-      'Does not search for objects that are hidden (10-12 mos.)', 
+      'Does not search for objects that are hidden (10-11 mos.)', 
       'Says no single words (“mama” or “dada”)', 
       'Does not learn to use gestures such as waving or shaking head', 
       'Does not sit steadily by 10 months'
     ]
   },
   {
-    id: 'm-12-24',
-    label: '12 to 24 Months',
+    id: 'm-1-2y',
+    label: '1 to 2 Years',
     minAge: 12,
     maxAge: 24,
     sections: [
@@ -179,8 +179,8 @@ const ECDC_FULL_DATA: MilestoneTemplate[] = [
     ]
   },
   {
-    id: 'm-24-36',
-    label: '24 to 36 Months',
+    id: 'm-2-3y',
+    label: '2 to 3 Years',
     minAge: 24,
     maxAge: 36,
     sections: [
@@ -216,6 +216,69 @@ const ECDC_FULL_DATA: MilestoneTemplate[] = [
       'Inability to communicate in short phrases', 
       'No involvement in pretend play', 
       'Extreme difficulty separating from primary caregiver'
+    ]
+  },
+  {
+    id: 'm-3-4y',
+    label: '3 to 4 Years',
+    minAge: 36,
+    maxAge: 48,
+    sections: [
+      { title: 'Movement', items: [
+        'Hops and stands on one foot up to 5 seconds', 
+        'Goes up and downstairs without support', 
+        'Kicks ball forward with control', 
+        'Catches a bounced ball most of the time'
+      ] },
+      { title: 'Language & Cognitive', items: [
+        'Speaks in sentences of 5 to 6 words', 
+        'Understands concept of counting and may know a few numbers', 
+        'Correctly names at least four colors', 
+        'Tells stories and recalls parts of a story'
+      ] },
+      { title: 'Social & Emotional', items: [
+        'Cooperates with other children', 
+        'Plays "Mom" or "Dad"', 
+        'More inventive in fantasy play', 
+        'Dresses and undresses self with minimal help'
+      ] }
+    ],
+    redFlags: [
+      'Cannot jump in place or ride a tricycle', 
+      'Cannot grasp a crayon between thumb and fingers', 
+      'Has trouble scribbling', 
+      'Does not use sentences of more than three words'
+    ]
+  },
+  {
+    id: 'm-4-5y',
+    label: '4 to 5 Years',
+    minAge: 48,
+    maxAge: 60,
+    sections: [
+      { title: 'Movement', items: [
+        'Stands on one foot for 10 seconds or longer', 
+        'Hops, somersaults, swings and climbs', 
+        'Uses fork and spoon and sometimes a table knife', 
+        'Cares for own toilet needs independently'
+      ] },
+      { title: 'Language & Cognitive', items: [
+        'Recalls parts of a story accurately', 
+        'Speaks clearly using complex sentences', 
+        'Counts 10 or more objects', 
+        'Correctly names at least four colors and shapes'
+      ] },
+      { title: 'Social & Emotional', items: [
+        'Wants to please and be like friends', 
+        'More likely to agree with rules', 
+        'Shows independence and can manage peer conflict'
+      ] }
+    ],
+    redFlags: [
+      'Acts unusually fearful, aggressive, or shy', 
+      'Cannot brush teeth, wash hands, or undress without help', 
+      'Cannot draw a person with head and body', 
+      'Trouble concentrating on single activity for more than 5 minutes'
     ]
   }
 ];

@@ -27,7 +27,7 @@ export const LoginPage: React.FC = () => {
     setError('');
     
     try {
-      await login(selectedRole, { email, pass: password });
+      await login(selectedRole, { email: email.toLowerCase().trim(), pass: password.trim() });
     } catch (err: any) {
       setError('Invalid terminal credentials. Please verify and retry.');
     } finally {

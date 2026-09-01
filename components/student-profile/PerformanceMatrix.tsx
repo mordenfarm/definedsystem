@@ -41,6 +41,18 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
     return days;
   }, []);
 
+  const biWeeklyDays = useMemo(() => {
+    const days: string[] = [];
+    const start = new Date();
+    start.setDate(start.getDate() - start.getDay() - 6);
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      if (date.getDay() !== 0 && date.getDay() !== 6) days.push(date.toISOString().split('T')[0]);
+    }
+    return days;
+  }, []);
+
   const groupedMonthly = useMemo(() => {
     const months: Record<string, { logs: SessionLog[]; checks: MilestoneRecord[] }> = {};
     logs.forEach(l => {
@@ -154,16 +166,16 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
     setIsExporting(null);
   };
 
-  const btnClass = (active: boolean) => `px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-slate-900 text-white dark:bg-blue-600' : 'text-slate-500 hover:text-black'}`;
+  const btnClass = (active: boolean) => `rounded-md px-3 py-2 text-[10px] font-bold transition-all ${active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:bg-white hover:text-slate-900 dark:hover:bg-slate-700 dark:hover:text-white'}`;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-slate-900 dark:border-slate-800 pb-6">
+    <div className="space-y-5 pb-10 animate-in fade-in duration-500">
+      <header className="flex flex-col justify-between gap-4 border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:p-5 dark:border-slate-800 dark:bg-slate-900">
         <div>
-          <h3 className="text-xl font-black uppercase text-slate-900 dark:text-white leading-none">School Progress</h3>
-          <p className="text-[10px] font-black text-slate-500 uppercase mt-2 tracking-widest italic">View the child's learning history</p>
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Learning record</p>
+          <h3 className="mt-0.5 text-sm font-bold text-slate-900 dark:text-white">School progress history</h3>
         </div>
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-none border-2 border-slate-900 dark:border-slate-800 shadow-sm">
+        <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1 dark:border-slate-700 dark:bg-slate-800">
           {['Weekly', 'Bi-weekly', 'Monthly', 'Yearly'].map((f: any) => (
             <button key={f} onClick={() => setFilter(f)} className={btnClass(filter === f)}>{f}</button>
           ))}
@@ -171,11 +183,13 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
       </header>
 
       <div className="grid grid-cols-1 gap-6">
-        {filter === 'Weekly' && (
-          <div className="bg-white dark:bg-slate-900 border-2 border-slate-900 dark:border-slate-800 rounded-none overflow-hidden shadow-sm">
-            <div className="bg-slate-50 dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700">
-              <h4 className="text-sm font-black uppercase text-slate-900 dark:text-white">This Week's Activity</h4>
-              <p className="text-[10px] font-mono font-bold text-slate-900 dark:text-white mt-1">{getWeekRange(new Date())}</p>
+        {(filter === 'Weekly' || filter === 'Bi-weekly') && (
+          <div className="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="border-b border-slate-200 bg-slate-50/80 px-5 py-3 dark:border-slate-700 dark:bg-slate-800/50">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">{filter === 'Weekly' ? "This week's activity" : 'Two-week activity'}</h4>
+              <p className="mt-1 font-mono text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                {filter === 'Weekly' ? getWeekRange(new Date()) : `${biWeeklyDays[0]} to ${biWeeklyDays[biWeeklyDays.length - 1]}`}
+              </p>
             </div>
             <div className="overflow-x-auto no-scrollbar">
               <table className="w-full text-left table-fixed sm:table-auto">
@@ -187,14 +201,14 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {currentDays.map(date => {
+                  {(filter === 'Weekly' ? currentDays : biWeeklyDays).map(date => {
                     const dayLogs = logs.filter(l => l.date.split('T')[0] === date);
                     const dayMile = milestones.filter(m => m.timestamp.split('T')[0] === date);
                     return (
                       <tr key={date} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        <td className="px-4 sm:px-6 py-5">
-                          <p className="text-[13px] font-black uppercase text-black dark:text-white truncate">{new Date(date).toLocaleDateString('en-US', { weekday: 'long' })}</p>
-                          <p className="text-[9px] font-mono text-slate-400 font-bold">{date}</p>
+                        <td className="px-4 py-4 sm:px-6">
+                          <p className="truncate text-[13px] font-bold text-slate-900 dark:text-white">{new Date(date).toLocaleDateString('en-US', { weekday: 'long' })}</p>
+                          <p className="font-mono text-[9px] font-medium text-slate-400">{date}</p>
                         </td>
                         <td className="px-4 sm:px-6 py-5 hidden sm:table-cell">
                            <div className="flex gap-4">
@@ -203,7 +217,7 @@ export const PerformanceMatrix: React.FC<Props> = ({ student, logs, milestones, 
                            </div>
                         </td>
                         <td className="px-4 sm:px-6 py-5 text-right">
-                           <button onClick={() => onOpenDay(date)} className="px-4 sm:px-6 py-2 bg-slate-900 dark:bg-blue-600 text-white font-black uppercase text-[9px] rounded-none active:scale-95 transition-transform">View Details</button>
+                           <button onClick={() => onOpenDay(date)} className="rounded-md bg-blue-600 px-4 py-2 text-[9px] font-bold text-white transition-colors hover:bg-blue-700 sm:px-5">View records</button>
                         </td>
                       </tr>
                     );

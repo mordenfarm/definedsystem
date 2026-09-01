@@ -180,25 +180,27 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      let loginEmail = bypassEmail || email;
-      let loginPass = bypassPass || password;
+      let loginEmail = (bypassEmail || email).toLowerCase().trim();
+      let loginPass = (bypassPass || password).trim();
 
       if (selectedRole === 'STUDENT' && selectedStudentProfile) {
-        loginEmail = `${selectedStudentProfile.firstName.toLowerCase()}.${selectedStudentProfile.lastName.toLowerCase()}@defineddomain.com`;
+        loginEmail = (selectedStudentProfile.email || `${selectedStudentProfile.id.toLowerCase()}@defineddomain.com`).toLowerCase().trim();
       } else if (selectedRole === 'PARENT' && selectedParentProfile) {
-        loginEmail = selectedParentProfile.email;
+        loginEmail = (selectedParentProfile.email || '').toLowerCase().trim();
       } else if (selectedRole === 'SPECIALIST' && selectedStaffProfile) {
-        loginEmail = selectedStaffProfile.email;
+        loginEmail = (selectedStaffProfile.email || '').toLowerCase().trim();
       }
 
       await login(selectedRole, { email: loginEmail, pass: loginPass });
     } catch (err: any) {
       console.error(err);
-      let errorMessage = 'Login failed. Please check your details.';
+      let errorMessage = 'Login failed. Please check your password.';
       if (err.message === 'ROLE_MISMATCH') {
         errorMessage = 'Invalid role selected for this account.';
+      } else if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        errorMessage = 'Incorrect password. Please verify and retry.';
       }
-      notify('error', errorMessage, 1000);
+      notify('error', errorMessage, 4000);
     } finally {
       setLoading(false);
     }

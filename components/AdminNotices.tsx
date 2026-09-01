@@ -74,30 +74,21 @@ export const AdminNotices: React.FC = () => {
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20 selection:bg-blue-100 selection:text-blue-900">
-      {/* Header Section */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Bell size={18} className="text-googleBlue" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-googleBlue">Terminal Communications</span>
-          </div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">Notice Board</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-3 italic">Broadcast official updates to the school node.</p>
-        </div>
+    <div className="w-full space-y-8 px-5 py-6 pb-20 animate-in fade-in duration-700 selection:bg-blue-100 selection:text-blue-900 sm:px-6 md:px-8">
+      <div className="flex justify-end">
         <button 
           onClick={scrollToHistory}
-          className="flex items-center gap-3 px-8 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm rounded-none active:scale-95"
+          className="flex items-center gap-2 rounded-[9px] border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
         >
           <History size={16} /> History Registry
         </button>
-      </header>
+      </div>
 
       {/* Main Form Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form Area */}
         <div className="lg:col-span-8">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-none shadow-sm overflow-hidden">
+          <div className="overflow-hidden rounded-[9px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white flex items-center gap-3">
                  <MessageSquare size={14} className="text-googleBlue" /> New Announcement

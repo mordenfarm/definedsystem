@@ -24,23 +24,16 @@ export const SystemLogs: React.FC = () => {
   }, [systemLogs]);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="flex items-center gap-6">
+    <div className="w-full space-y-7 px-5 py-6 pb-20 animate-in fade-in duration-700 sm:px-6 md:px-8">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
           <button 
             onClick={() => setActiveTab('dashboard')}
-            className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-400 hover:text-blue-600 shadow-sm"
+            className="p-1 text-slate-400 transition-colors hover:text-blue-600"
+            title="Back to dashboard"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={19} />
           </button>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <ShieldAlert size={18} className="text-rose-600" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-600">System Activity</span>
-            </div>
-            <h1 className="text-4xl font-black tracking-tight uppercase dark:text-white leading-none">System Logs</h1>
-            <p className="text-sm text-slate-500 font-medium mt-3 italic">Tracking all user actions, logins, and records.</p>
-          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -64,7 +57,7 @@ export const SystemLogs: React.FC = () => {
         </div>
       </header>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3rem] overflow-hidden shadow-sm">
+      <div className="overflow-hidden rounded-[9px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="p-4 md:p-8 space-y-4">
            <div className="hidden md:grid grid-cols-12 gap-6 pb-6 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-400">
               <div className="col-span-3">Date & Time</div>

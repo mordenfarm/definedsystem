@@ -200,15 +200,8 @@ export const StudentApplications: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <h1 className="text-4xl font-black uppercase tracking-tight dark:text-white leading-none">Student Applicants</h1>
-          <p className="text-sm text-slate-500 font-medium mt-3 italic">Review submissions and provide enrollment next steps.</p>
-        </div>
-      </header>
-
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-none overflow-hidden shadow-sm">
+    <div className="w-full px-5 py-6 animate-in fade-in duration-700 sm:px-6 md:px-8">
+      <div className="overflow-hidden rounded-[9px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-slate-50 dark:bg-slate-950/50 text-[10px] font-black uppercase tracking-widest text-black dark:text-white border-b border-slate-100 dark:border-slate-800">

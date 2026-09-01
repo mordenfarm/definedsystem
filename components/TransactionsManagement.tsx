@@ -18,19 +18,8 @@ export const TransactionsManagement: React.FC = () => {
   });
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600">
-              <Receipt size={16} />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Fulfillment Node</span>
-          </div>
-          <h1 className="text-4xl font-black tracking-tight uppercase dark:text-white leading-none">Order Transactions</h1>
-          <p className="text-sm text-slate-500 font-medium mt-3">Verify payments and track uniform collection status.</p>
-        </div>
-
+    <div className="w-full space-y-7 px-5 py-6 animate-in fade-in duration-700 sm:px-6 md:px-8">
+      <header className="flex flex-col gap-6 md:flex-row md:items-end md:justify-end">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative group min-w-[300px]">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500" />
@@ -54,7 +43,7 @@ export const TransactionsManagement: React.FC = () => {
         </div>
       </header>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] overflow-hidden shadow-sm">
+      <div className="overflow-hidden rounded-[9px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">

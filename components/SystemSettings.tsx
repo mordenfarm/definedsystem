@@ -59,27 +59,27 @@ export const SystemSettings: React.FC = () => {
   const visibleTabs = allTabs.filter(t => !t.adminOnly || isAdmin);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1400px] mx-auto selection:bg-blue-100 font-sans">
+    <div className="w-full space-y-7 px-5 py-6 font-sans animate-in fade-in duration-500 selection:bg-blue-100 sm:px-6 md:px-8">
       <header>
-        <h1 className="text-4xl font-black uppercase tracking-tighter text-slate-900 dark:text-white leading-none">Settings</h1>
-        <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-slate-400 mt-3 italic">
+        <h1 className="text-2xl font-bold leading-none tracking-tight text-slate-900 dark:text-white">Settings</h1>
+        <p className="mt-2 text-xs font-medium text-slate-400">
           {isAdmin ? 'System Registry Management' : 'Manage your professional node'}
         </p>
       </header>
 
-      <div className={`flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-none border-2 ${inputBorderStyle} w-fit overflow-x-auto max-w-full no-scrollbar`}>
+      <div className={`no-scrollbar flex max-w-full w-fit overflow-x-auto rounded-[9px] border ${inputBorderStyle} bg-slate-100 p-1 dark:bg-slate-900`}>
          {visibleTabs.map(tab => (
            <button 
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-6 py-3 rounded-none flex items-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-[#154A70] text-white shadow-sm' : 'text-slate-400 hover:text-slate-700'}`}
+            className={`flex items-center gap-2 rounded-[7px] px-4 py-2.5 text-[10px] font-bold transition-all ${activeTab === tab.id ? 'bg-[#154A70] text-white shadow-sm' : 'text-slate-400 hover:text-slate-700'}`}
            >
              {tab.icon} {tab.label}
            </button>
          ))}
       </div>
 
-      <div className={`bg-white dark:bg-slate-900 border-2 ${inputBorderStyle} rounded-none shadow-sm overflow-hidden min-h-[600px]`}>
+      <div className={`min-h-[600px] overflow-hidden rounded-[9px] border ${inputBorderStyle} bg-white shadow-sm dark:bg-slate-900`}>
         {activeTab === 'checklists' && isAdmin && <ChecklistTemplates onEdit={setEditingTemplate} onAdd={handleAddTemplate} />}
         {activeTab === 'tasks' && isAdmin && <DefaultTasks />}
         {activeTab === 'fees' && isAdmin && <FeesAndTerm />}
